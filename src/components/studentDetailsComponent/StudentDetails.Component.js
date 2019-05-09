@@ -1,32 +1,9 @@
 import React, { Component } from 'react';
-import './SignIn.Component.css'
-import { Route, withRouter } from 'react-router-dom'
+import './StudentDetails.Component.css'
+import axios from 'axios'
 
-class SignInComponent extends Component {
-    signInObject = {};
-    constructor(props) {
-        super(props)
-        this.state = {
-            userName: '',
-            passWord: ''
-        }
-
-        this.signIn = this.signIn.bind(this);
-        this.onChange = this.onChange.bind(this);
-    }
-
-    signIn() {
-        this.signInObject.userName = this.state.userName;
-        this.signInObject.passWord = this.state.passWord;
-        window.location.href = '/studentDetails';
-        // call the api
-        // get the response
-    }
-
-    onChange(e) {
-        this.setState({ [e.target.id]: e.target.value });
-    }
-
+class StudentDetails extends Component {
+    state = {}
     render() {
         return (
             <div className="container">
@@ -60,4 +37,4 @@ class SignInComponent extends Component {
     }
 }
 
-export default SignInComponent;
+export default StudentDetails;

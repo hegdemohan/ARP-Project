@@ -23,15 +23,12 @@ class DashboardComponent extends Component {
     upload() {
         // this.setState({availableSubjects : '[subjects:{"abhs","askjdhasjkdhk","askjdhdkashdasudiad"}]'});
         //Send the document API
-        axios.get("https://a8727e03-e1c5-4544-a9de-c5159c1ae5a5.mock.pstmn.io/availableSubjects").then(res => {
-            this.setState({ availableSubjects: res.data });
-            console.log(this.state.availableSubjects);
+        axios.get("https://70a0e7ff-13e6-44fd-9d63-349e40cb7d00.mock.pstmn.io/api/getData").then(res => {
+            // this.setState({ availableSubjects: res.data});
+            this.setState({availableSubjects : res.data.subjects.map((subject) =>
+                <li className="card" key={subject.name}>{subject.name}</li>)})
         });
-//          this.setState({items: this.state.availableSubjects.map((subjects) => <li>{subjects}</li>)
-// });
-const subjects = ["asdasdasd","asdasdasd","asdasdasdasd"];
-this.setState({items : subjects.map((subject) =>
-<li key={subject}>{subject}</li>)})
+
 }
 
 
@@ -54,7 +51,10 @@ this.setState({items : subjects.map((subject) =>
                                 <button className="btn btn-lg btn-primary my-4" type="submit" onClick={this.upload}>Upload</button>
                                 <hr className="my-4" />
                                 <ul>
-                                    {this.state.items}
+                                    {/* {this.state.availableSubjects.map((subjects,index)=>{
+                                        return <h1>{subjects.name}</h1>
+                                    })} */}
+                                    {this.state.availableSubjects}
                                 </ul>
                             </div>
                         </div>
