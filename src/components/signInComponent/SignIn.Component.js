@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './SignIn.Component.css'
+import axios from 'axios'
 import { Route, withRouter } from 'react-router-dom'
 
 class SignInComponent extends Component {
@@ -7,8 +8,9 @@ class SignInComponent extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            userName: '',
-            passWord: ''
+            email: '',
+            passWord: '',
+            responseObject: ''
         }
 
         this.signIn = this.signIn.bind(this);
@@ -16,9 +18,18 @@ class SignInComponent extends Component {
     }
 
     signIn() {
-        this.signInObject.userName = this.state.userName;
-        this.signInObject.passWord = this.state.passWord;
-        window.location.href = '/studentDetails';
+        console.log("here")
+        axios.post("https://0ab80a65-1441-4447-b497-11020f9f0b0e.mock.pstmn.io/login", { "email": this.state.email, "password": this.state.passWord }).then(res => {
+            // this.setState({ availableSubjects: res.data});
+            this.setState({ responseObject: res.data });
+            if (this.state.responseObject.isAdmin === false) {
+                this.signInObject.email = this.state.email;
+                this.signInObject.passWord = this.state.passWord;
+                window.location.href = '/studentDetails';
+            }
+        }).catch(function (error) {
+            console.log(error);
+        });
         // call the api
         // get the response
     }
@@ -37,8 +48,8 @@ class SignInComponent extends Component {
                                 <h5 className="card-title text-center">Sign In</h5>
                                 <form className="form-signin">
                                     <div className="form-label-group">
-                                        <input type="email" id="userName" className="form-control" placeholder="Email address" onChange={this.onChange} required />
-                                        <label htmlFor="userName">Email address</label>
+                                        <input type="email" id="email" className="form-control" placeholder="Email address" onChange={this.onChange} required />
+                                        <label htmlFor="email">Email address</label>
                                     </div>
                                     <div className="form-label-group">
                                         <input type="password" id="passWord" className="form-control" placeholder="Password" onChange={this.onChange} required />
