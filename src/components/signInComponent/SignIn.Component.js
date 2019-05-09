@@ -18,14 +18,14 @@ class SignInComponent extends Component {
     }
 
     signIn() {
-        console.log("here")
+        window.location.href = '/studentDetails/';
         axios.post("https://0ab80a65-1441-4447-b497-11020f9f0b0e.mock.pstmn.io/login", { "email": this.state.email, "password": this.state.passWord }).then(res => {
             // this.setState({ availableSubjects: res.data});
             this.setState({ responseObject: res.data });
             if (this.state.responseObject.isAdmin === false) {
                 this.signInObject.email = this.state.email;
                 this.signInObject.passWord = this.state.passWord;
-                window.location.href = '/studentDetails';
+                window.location.href = '/studentDetails/';
             }
         }).catch(function (error) {
             console.log(error);
@@ -48,18 +48,18 @@ class SignInComponent extends Component {
                                 <h5 className="card-title text-center">Sign In</h5>
                                 <form className="form-signin">
                                     <div className="form-label-group">
-                                        <input type="email" id="email" className="form-control" placeholder="Email address" onChange={this.onChange} required />
+                                        <input type="email" id="email" className="form-control text-center" placeholder="Email address" onChange={this.onChange} required />
                                         <label htmlFor="email">Email address</label>
                                     </div>
                                     <div className="form-label-group">
-                                        <input type="password" id="passWord" className="form-control" placeholder="Password" onChange={this.onChange} required />
+                                        <input type="password" id="passWord" className="form-control text-center" placeholder="Password" onChange={this.onChange} required />
                                         <label htmlFor="passWord">Password</label>
                                     </div>
                                     <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.signIn}>Sign in</button>
                                     <div className="mt-4"><a href='#'>Forgot password?</a></div>
                                     <hr className="my-4" />
                                     <div>Haven't registered yet?</div>
-                                    <a href="#">Register now</a>
+                                    <a href="/Registration/">Register now</a>
                                     <hr className="my-4" />
                                 </form>
                             </div>
