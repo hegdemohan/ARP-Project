@@ -41,7 +41,7 @@ class Registration extends Component {
                                     </div>
                                     <div className="form-label-group">
                                         <input type="password" id="confirmPassWord" className="form-control text-center" placeholder="Confirm Password" onChange={this.onChange} required />
-                                        <label htmlFor="passWord">Confirm Password</label>
+                                        <label htmlFor="confirmPassWord">Confirm Password</label>
                                     </div>
                                     <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.register}>Register</button>
                                     <hr className="my-4" />
