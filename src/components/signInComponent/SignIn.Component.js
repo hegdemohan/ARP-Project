@@ -17,14 +17,17 @@ class SignInComponent extends Component {
     }
 
     signIn() {
-        window.location.href = '/studentDetails/';
+        // return <Redirect to="/studentDetails/" />
+        if(this.state.email === "hegdemohan94@gmail.com" && this.state.passWord === "1234"){
+            this.props.history.push('/studentDetails/');
+        }
         // axios.post("https://0ab80a65-1441-4447-b497-11020f9f0b0e.mock.pstmn.io/login", { "email": this.state.email, "password": this.state.passWord }).then(res => {
         //     // this.setState({ availableSubjects: res.data});
         //     this.setState({ responseObject: res.data });
         //     if (this.state.responseObject.isAdmin === false) {
         //         this.signInObject.email = this.state.email;
         //         this.signInObject.passWord = this.state.passWord;
-        //         window.location.href = '/studentDetails/';
+        // this.props.history.push("/studentDetails/");
         //     }
         // }).catch(function (error) {
         //     console.log(error);

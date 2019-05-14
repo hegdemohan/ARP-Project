@@ -22,10 +22,10 @@ class StudentDetails extends Component {
     navigate(buttonClicked) {
         if (buttonClicked == "new") {
             localStorage.setItem("newUser", "true");
-            window.location.href = "/dashboard/";
+            this.props.history.push("/dashboard/");
         } else {
             localStorage.setItem("newUser", "false");
-            window.location.href = "/dashboard/";
+            this.props.history.push("/dashboard/");
         }
 
     }

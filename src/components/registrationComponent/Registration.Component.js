@@ -8,7 +8,7 @@ class Registration extends Component {
         this.register = this.register.bind(this);
     }
     register(){
-        window.location.href = "/dashboard/";
+        this.props.history.push("/dashboard/");
     }
     render() {
         return (
