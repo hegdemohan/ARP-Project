@@ -4,28 +4,58 @@ import axios from 'axios'
 
 class StudentDetails extends Component {
     userDetailsObject = {};
+    temp;
+    subjects;
     constructor(props) {
         super(props)
         this.state = {
-            subjectsObject: ""
+            subjectsObject: ''
         }
         this.init = this.init.bind(this);
+        this.navigate = this.navigate.bind(this);
+    }
+
+    componentDidMount(){
         this.init();
     }
-    init() {
-        axios.get("https://0ab80a65-1441-4447-b497-11020f9f0b0e.mock.pstmn.io/getStudentDetails").then(res => {
-            // this.setState({ availableSubjects: res.data});
-            this.userDetailsObject.firstName = res.data.firstName;
-            this.userDetailsObject.lastName = res.data.lastName;
-            this.userDetailsObject.matriculationNo = res.data.matriculationNo;
-            this.setState({ subjectsObject: res.data.subjects });
-            if (this.state.subjectsObject.length == 0) {
-                this.userDetailsObject.newUser = true;
-            } else {
-                this.userDetailsObject.newUser = false;
-            }
-        });
+
+    navigate(buttonClicked) {
+        if (buttonClicked == "new") {
+            localStorage.setItem("newUser", "true");
+            window.location.href = "/dashboard/";
+        } else {
+            localStorage.setItem("newUser", "false");
+            window.location.href = "/dashboard/";
+        }
+
     }
+    
+    init() {
+        this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [{ "subjectID": 123, "subjectName": "ABCD", "isSelected": true }] }
+        this.setState({subjectsObject:this.subjects});
+        this.userDetailsObject.firstName = this.temp.firstName;
+            this.userDetailsObject.lastName = this.temp.lastName;
+            this.userDetailsObject.matriculationNo =this.temp.matriculationNo;
+        if (this.temp.subjects.length == 0) {
+            this.userDetailsObject.newUser = true;
+        } else {
+            this.userDetailsObject.newUser = false;
+        }
+
+        // axios.get("https://0ab80a65-1441-4447-b497-11020f9f0b0e.mock.pstmn.io/getStudentDetails").then(res => {
+        //     // this.setState({ availableSubjects: res.data});
+        //     this.userDetailsObject.firstName = res.data.firstName;
+        //     this.userDetailsObject.lastName = res.data.lastName;
+        //     this.userDetailsObject.matriculationNo = res.data.matriculationNo;
+        //     this.setState({ subjectsObject: res.data.subjects });
+        //     if (this.state.subjectsObject.length == 0) {
+        //         this.userDetailsObject.newUser = true;
+        //     } else {
+        //         this.userDetailsObject.newUser = false;
+        //     }
+        // });
+    }
+
     render() {
         return (
             <div className="container">
@@ -43,10 +73,10 @@ class StudentDetails extends Component {
                                 <hr className="my-4"></hr>
                                 <div className="row">
                                     <div className="col-6">
-                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.userDetailsObject.newUser}>Add new</button>
+                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.userDetailsObject.newUser} onClick={() => this.navigate('new')}>Add new</button>
                                     </div>
                                     <div className="col-6">
-                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.userDetailsObject.newUser}>Edit</button>
+                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.userDetailsObject.newUser} onClick={()=>this.navigate('edit')}>Edit</button>
                                     </div>
                                 </div>
                             </div>

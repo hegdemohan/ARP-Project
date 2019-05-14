@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './SignIn.Component.css'
 import axios from 'axios'
-import { Route, withRouter } from 'react-router-dom'
 
 class SignInComponent extends Component {
     signInObject = {};
@@ -19,17 +18,17 @@ class SignInComponent extends Component {
 
     signIn() {
         window.location.href = '/studentDetails/';
-        axios.post("https://0ab80a65-1441-4447-b497-11020f9f0b0e.mock.pstmn.io/login", { "email": this.state.email, "password": this.state.passWord }).then(res => {
-            // this.setState({ availableSubjects: res.data});
-            this.setState({ responseObject: res.data });
-            if (this.state.responseObject.isAdmin === false) {
-                this.signInObject.email = this.state.email;
-                this.signInObject.passWord = this.state.passWord;
-                window.location.href = '/studentDetails/';
-            }
-        }).catch(function (error) {
-            console.log(error);
-        });
+        // axios.post("https://0ab80a65-1441-4447-b497-11020f9f0b0e.mock.pstmn.io/login", { "email": this.state.email, "password": this.state.passWord }).then(res => {
+        //     // this.setState({ availableSubjects: res.data});
+        //     this.setState({ responseObject: res.data });
+        //     if (this.state.responseObject.isAdmin === false) {
+        //         this.signInObject.email = this.state.email;
+        //         this.signInObject.passWord = this.state.passWord;
+        //         window.location.href = '/studentDetails/';
+        //     }
+        // }).catch(function (error) {
+        //     console.log(error);
+        // });
         // call the api
         // get the response
     }
