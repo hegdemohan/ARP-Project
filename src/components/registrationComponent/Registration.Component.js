@@ -8,7 +8,7 @@ class Registration extends Component {
         this.register = this.register.bind(this);
     }
     register(){
-        this.props.history.push("/dashboard/");
+        this.props.history.push("/signin/");
     }
     render() {
         return (

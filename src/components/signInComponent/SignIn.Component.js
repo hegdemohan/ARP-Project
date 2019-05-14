@@ -14,6 +14,7 @@ class SignInComponent extends Component {
 
         this.signIn = this.signIn.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.moveToRegistration = this.moveToRegistration.bind(this);
     }
 
     signIn() {
@@ -34,6 +35,10 @@ class SignInComponent extends Component {
         // });
         // call the api
         // get the response
+    }
+
+    moveToRegistration(){
+        this.props.history.push('/Registration/');
     }
 
     onChange(e) {
@@ -58,10 +63,10 @@ class SignInComponent extends Component {
                                         <label htmlFor="passWord">Password</label>
                                     </div>
                                     <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.signIn}>Sign in</button>
-                                    <div className="mt-4"><a href='#'>Forgot password?</a></div>
+                                    <div className="mt-4"><a className="anchor_tag">Forgot password?</a></div>
                                     <hr className="my-4" />
                                     <div>Haven't registered yet?</div>
-                                    <a href="/Registration/">Register now</a>
+                                    <a className="anchor_tag" onClick={this.moveToRegistration}>Register now</a>
                                     <hr className="my-4" />
                                 </form>
                             </div>

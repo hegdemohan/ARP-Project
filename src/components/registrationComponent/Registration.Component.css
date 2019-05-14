@@ -7,3 +7,13 @@ input[type=number]::-webkit-outer-spin-button {
 .text-center{
     text-align: center
 }
+
+.anchor_tag:hover{
+  color: #0056b3 !important;
+  text-decoration: underline !important;
+}
+
+.anchor_tag{
+  color: #007bff !important;
+  cursor: pointer;
+}
