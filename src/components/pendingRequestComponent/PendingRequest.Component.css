@@ -1,0 +1,7 @@
+.selectRowProp {
+  mode: "radio";
+  hideselectcolumn: true;
+  clicktoselect: true;
+  bgcolor: "rgb(238, 193, 213)";
+  onselect: onRowSelect;
+}
