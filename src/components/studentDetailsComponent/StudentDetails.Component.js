@@ -15,7 +15,7 @@ class StudentDetails extends Component {
         this.navigate = this.navigate.bind(this);
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.init();
     }
 
@@ -29,13 +29,13 @@ class StudentDetails extends Component {
         }
 
     }
-    
+
     init() {
         this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [{ "subjectID": 123, "subjectName": "ABCD", "isSelected": true }] }
-        this.setState({subjectsObject:this.subjects});
+        this.setState({ subjectsObject: this.subjects });
         this.userDetailsObject.firstName = this.temp.firstName;
-            this.userDetailsObject.lastName = this.temp.lastName;
-            this.userDetailsObject.matriculationNo =this.temp.matriculationNo;
+        this.userDetailsObject.lastName = this.temp.lastName;
+        this.userDetailsObject.matriculationNo = this.temp.matriculationNo;
         if (this.temp.subjects.length == 0) {
             this.userDetailsObject.newUser = true;
         } else {
@@ -76,7 +76,7 @@ class StudentDetails extends Component {
                                         <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.userDetailsObject.newUser} onClick={() => this.navigate('new')}>Add new</button>
                                     </div>
                                     <div className="col-6">
-                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.userDetailsObject.newUser} onClick={()=>this.navigate('edit')}>Edit</button>
+                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.userDetailsObject.newUser} onClick={() => this.navigate('edit')}>Edit</button>
                                     </div>
                                 </div>
                             </div>

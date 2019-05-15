@@ -5,6 +5,7 @@ import DashboardComponent from "./components/dashboardComponent/Dashboard.Compon
 import StudentDetails from "./components/studentDetailsComponent/StudentDetails.Component";
 import RequestComponent from "./components/requestComponent/Request.Component";
 import Registration from "./components/registrationComponent/Registration.Component";
+import UserComponent from "./components/userComponent/User.Component";
 
 class Router extends Component {
   state = {};
@@ -19,6 +20,7 @@ class Router extends Component {
             <Route path="/dashboard/" component={DashboardComponent} />
             <Route path="/Registration/" component={Registration} />
             <Route path="/requests/" component={RequestComponent} />
+            <Route path={"/users/"} component={UserComponent} />
           </Switch>
         </BrowserRouter>
       </div>
