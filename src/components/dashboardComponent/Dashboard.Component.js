@@ -134,7 +134,7 @@ class DashboardComponent extends Component {
   }
 
   submit(){
-    console.log(this.temp.subjects);
+    console.log(this.temp);
   }
 
   upload() {
