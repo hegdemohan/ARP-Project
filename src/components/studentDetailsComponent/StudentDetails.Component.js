@@ -31,7 +31,7 @@ class StudentDetails extends Component {
     }
 
     init() {
-        this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [{ "subjectID": 123, "subjectName": "ABCD", "isSelected": true }] }
+        this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [] }
         this.setState({ subjectsObject: this.subjects });
         this.userDetailsObject.firstName = this.temp.firstName;
         this.userDetailsObject.lastName = this.temp.lastName;

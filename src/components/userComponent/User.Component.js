@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 class UserComponent extends Component {
     // data = {};
+    subjectsLocal = [];
     constructor(props) {
         super(props)
         this.state = {
@@ -15,6 +16,12 @@ class UserComponent extends Component {
     init() {
         this.setState({ data: JSON.parse(localStorage.getItem("UserDetail")) });
         console.log(this.state.data);
+        // this.state.data.subjects.map((subject) => {
+        //     this.subjectsLocal.push(subject);
+        //     // if(subject.isSelected){
+        //     //     this.selectRowProp.selected.push(subject.subjectID);
+        //     // }
+        // });
     }
     render() {
 
@@ -30,7 +37,7 @@ class UserComponent extends Component {
                                     <div className="col-6">First Name:</div><div className="col-6">{this.state.data.firstName}</div>
                                     <div className="col-6">Last Name:</div><div className="col-6">{this.state.data.lastName}</div>
                                     <div className="col-6">Matriculation Number:</div><div className="col-6">{this.state.data.id}</div>
-                                    <div className="col-6">Requested Subjects:</div><div className="col-6">{this.state.data.subjects}</div>
+                                    <div className="col-6">Requested Subjects:</div><div className="col-6">{this.subjectsLocal}</div>
 
                                 </div>
                             </div>
