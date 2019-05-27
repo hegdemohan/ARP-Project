@@ -18,86 +18,57 @@ class SignInComponent extends Component {
     this.onChange = this.onChange.bind(this);
     this.moveToRegistration = this.moveToRegistration.bind(this);
   }
-  componentDidMount() {
-    const data = {
-      email: "1sri93ram@gmail.com",
-      password: "pass1234"
-    };
-    fetch("http://192.168.0.104:4005/api/login", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Headers": "*",
-        "Access-Control-Allow-origin": "*"
-      },
-      body: data
-    }).then(data => {
-      console.log(data);
-    });
-  }
-  signIn(e) {
-    // return <Redirect to="/studentDetails/" />
-    // if (this.state.email === "student@gmail.com" && this.state.passWord === "1234") {
-    //     this.props.history.push('/studentDetails/');
-    // } else if (this.state.email === "admin@gmail.com" && this.state.passWord === "1234") {
-    //     this.props.history.push('/requests/');
-
-    // }
-    // else {
-    //     alert("Please give valid credentials");
-    // }
+  // componentDidMount() {
+  //   const data = {
+  //     email: "1sri93ram@gmail.com",
+  //     password: "pass1234"
+  //   };
+  //   fetch("http://192.168.0.104:4005/api/login", {
+  //     method: "POST",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //       "Access-Control-Allow-Headers": "*",
+  //       "Access-Control-Allow-origin": "*"
+  //     },
+  //     body: data
+  //   }).then(data => {
+  //     console.log(data);
+  //   });
+  // }
+  async signIn(e) {
     e.preventDefault();
-    // fetch("")
-    // var http = new XMLHttpRequest();
-    // var url = "http://192.168.0.104:4005/api/login";
-    // var params = {
-    //   email: this.state.email,
-    //   password: this.state.passWord
-    // };
-    // http.open("POST", url, true);
-
-    // //Send the proper header information along with the request
-    // http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-    // http.onreadystatechange = function() {
-    //   //Call a function when the state changes.
-    //   if (http.readyState == 4 && http.status == 200) {
-    //     alert(http.responseText);
-    //   }
-    // };
-    // http.send(params);
-    // axios
-    //   .post(
-    //     "http://192.168.0.104:4005/api/login",
-    //     {
-    //       email: this.state.email,
-    //       password: this.state.passWord
-    //     },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/x-www-form-urlencoded",
-    //         // "Access-Control-Request-Headers": "*",
-    //         "Access-Control-Allow-Headers": "*",
-    //         "Access-Control-Allow-origin": "*"
-    //       }
-    //     }
-    //   )
-    //   .then(res => {
-    //     console.log(res.data);
-    //     // this.setState({ availableSubjects: res.data});
-    //     this.setState({ responseObject: res.data });
-    //     if (this.state.responsesObject.isAdmin === false) {
-    //       this.signInObject.email = this.state.email;
-    //       this.signInObject.passWord = this.state.passWord;
-    //       this.props.history.push("/studentDetails/");
-    //     }
-    //   })
-    //   .catch(function(error) {
-    //     console.log(error);
-    //   });
-    // call the api
-    // get the response
+    await axios
+      .post(
+        "http://192.168.0.102:4005/api/login",
+        {
+          email: this.state.email,
+          password: this.state.passWord
+        },
+      )
+      .then(res => {
+        if (res.data.isAdmin) {
+          axios
+            .get(
+              "http://192.168.0.102:4005/api/getStudentRequestData?type=all"
+            )
+            .then(res => {
+              console.log("Success");
+              this.props.history.push("/requests/");
+            });
+        }
+        else {
+          axios
+            .get(
+              "http://192.168.0.102:4005/api/getStudentData/" + res.data.studentID
+            )
+            .then(resp => {
+              console.log("Success");
+              localStorage.setItem("StudentData", JSON.stringify(resp.data));
+              this.props.history.push("/studentDetails/");
+            });
+        }
+      });
   }
 
   moveToRegistration() {

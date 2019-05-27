@@ -3,13 +3,14 @@ import './StudentDetails.Component.css';
 import axios from 'axios'
 
 class StudentDetails extends Component {
-    userDetailsObject = {};
     temp;
     subjects;
     constructor(props) {
         super(props)
         this.state = {
-            subjectsObject: ''
+            subjectsObject: '',
+            userDetailsObject: {}
+
         }
         this.init = this.init.bind(this);
         this.navigate = this.navigate.bind(this);
@@ -31,15 +32,17 @@ class StudentDetails extends Component {
     }
 
     init() {
-        this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [] }
+        // this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [] }
+        var data = JSON.parse(localStorage.getItem("StudentData"));
+        console.log(data.firstName);
         this.setState({ subjectsObject: this.subjects });
-        this.userDetailsObject.firstName = this.temp.firstName;
-        this.userDetailsObject.lastName = this.temp.lastName;
-        this.userDetailsObject.matriculationNo = this.temp.matriculationNo;
-        if (this.temp.subjects.length == 0) {
-            this.userDetailsObject.newUser = true;
+        this.state.userDetailsObject.firstName = data.firstName;
+        this.state.userDetailsObject.lastName = data.lastName;
+        this.state.userDetailsObject.matriculationNo = data.matriculationNumber;
+        if (data.subjects.length == 0) {
+            this.state.userDetailsObject.newUser = true;
         } else {
-            this.userDetailsObject.newUser = false;
+            this.state.userDetailsObject.newUser = false;
         }
 
         // axios.get("https://0ab80a65-1441-4447-b497-11020f9f0b0e.mock.pstmn.io/getStudentDetails").then(res => {
@@ -66,17 +69,17 @@ class StudentDetails extends Component {
                                 <h3 className="card-title text-center">Student Details</h3>
                                 <hr className="my-4"></hr>
                                 <div className="row">
-                                    <div className="col-6">First Name:</div><div className="col-6">{this.userDetailsObject.firstName}</div>
-                                    <div className="col-6">Last Name:</div><div className="col-6">{this.userDetailsObject.lastName}</div>
-                                    <div className="col-6">Matriculation Number:</div><div className="col-6">{this.userDetailsObject.matriculationNo}</div>
+                                    <div className="col-6">First Name:</div><div className="col-6">{this.state.userDetailsObject.firstName}</div>
+                                    <div className="col-6">Last Name:</div><div className="col-6">{this.state.userDetailsObject.lastName}</div>
+                                    <div className="col-6">Matriculation Number:</div><div className="col-6">{this.state.userDetailsObject.matriculationNo}</div>
                                 </div>
                                 <hr className="my-4"></hr>
                                 <div className="row">
                                     <div className="col-6">
-                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.userDetailsObject.newUser} onClick={() => this.navigate('new')}>Add new</button>
+                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.state.userDetailsObject.newUser} onClick={() => this.navigate('new')}>Add new</button>
                                     </div>
                                     <div className="col-6">
-                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.userDetailsObject.newUser} onClick={() => this.navigate('edit')}>Edit</button>
+                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.state.userDetailsObject.newUser} onClick={() => this.navigate('edit')}>Edit</button>
                                     </div>
                                 </div>
                             </div>
