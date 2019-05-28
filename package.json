@@ -5,6 +5,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap": "^4.3.1",
+    "create-react-class": "^15.6.3",
     "http-post": "^0.1.1",
     "jquery": "^3.4.1",
     "jspdf": "^1.5.3",

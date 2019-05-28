@@ -23,4 +23,5 @@ input[readonly] {
 
 .hidden{
   visibility:hidden;
+  position: fixed;
 }

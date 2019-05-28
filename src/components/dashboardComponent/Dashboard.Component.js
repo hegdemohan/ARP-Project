@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import "./Dashboard.Component.css";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import axios from "axios";
+import ReactDOM from 'react-dom';
 import jsPDF from "jspdf"
+import createReactClass from "create-react-class"
 
 class DashboardComponent extends Component {
   afterSelction = {}
@@ -25,6 +27,7 @@ class DashboardComponent extends Component {
     this.submit = this.submit.bind(this);
     this.editSubjects = this.editSubjects.bind(this);
     this.onSelectAllRows = this.onSelectAllRows.bind(this);
+    this.renderTable = this.renderTable.bind(this)
   }
 
   componentDidMount() {
@@ -72,6 +75,8 @@ class DashboardComponent extends Component {
   }
 
   submit() {
+    this.renderTable(this.state.data); //function to add the table with selected subjects for downloading
+
     var selectedAtLeastOne = false;
     this.state.data.map((subject) => {
       if (subject.isSelected) {
@@ -81,12 +86,26 @@ class DashboardComponent extends Component {
 
     if (selectedAtLeastOne) {
       var doc = new jsPDF()
-
       doc.fromHTML(document.getElementsByClassName('pdfPrint')[0], 15, 15)
-      doc.save('a4.pdf')
+      doc.save('Selected_Subjects.pdf')
     } else {
-      alert("Select at least one subjet!");
+      alert("Select at least one subject!");
     }
+  }
+
+  renderTable(data) {
+    var Table = createReactClass({
+      render: function () {
+        return (
+          <PdfContent data={data} />
+        );
+      }
+    });
+
+    ReactDOM.render(
+      <Table />,
+      document.getElementsByClassName("pdfPrint")[0]
+    );
   }
 
   upload() {
@@ -146,27 +165,28 @@ class DashboardComponent extends Component {
           </div>
         </div>
         <div className="pdfPrint hidden">
-          <BootstrapTable version='4' className="table table-striped" data={this.state.data}>
-            <TableHeaderColumn isKey dataField="subjectID" dataAlign="center">Subject ID</TableHeaderColumn>
-            <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
-          </BootstrapTable>
         </div>
       </div>
     );
   }
 }
 
-// function PdfContent(props) {
-//   var subjectsSelected = [];
-//   if (props.data != "") {
-//     props.data.map((subject) => {
-//       if (subject.isSelected) {
-//         subjectsSelected.push(subject);
-//         console.log(subjectsSelected);
-//       }
-//     });
-//   }
-// }
+function PdfContent(props) {
+  var subjectsSelected = [];
+  if (props.data != "") {
+    props.data.map((subject) => {
+      if (subject.isSelected) {
+        subjectsSelected.push(subject);
+      }
+    });
+  }
+  return (
+    <BootstrapTable version='4' className="table table-striped" data={subjectsSelected}>
+      <TableHeaderColumn isKey dataField="subjectID" dataAlign="center">Subject ID</TableHeaderColumn>
+      <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
+    </BootstrapTable>
+  );
+}
 
 function IsNewUSer(props) {
   if (localStorage.getItem("newUser") == "true") {
