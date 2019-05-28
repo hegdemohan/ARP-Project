@@ -5,34 +5,40 @@ import axios from "axios";
 import jsPDF from "jspdf"
 
 class DashboardComponent extends Component {
-  temp = {};
   afterSelction = {}
   selectRowProp = {}
   newUserDiv;
-  subjectsLocal = [];
+  // updatedSubjects = [];
   constructor(props) {
     super(props);
     this.state = {
       file: "",
       fileName: "",
-      availableSubjects: "",
-      items: ""
+      items: "",
+      data: ""
     };
     this.init = this.init.bind(this);
     this.onFileChange = this.onFileChange.bind(this);
     this.upload = this.upload.bind(this);
     this.submit = this.submit.bind(this);
     this.editSubjects = this.editSubjects.bind(this);
+    this.onSelectAllRows = this.onSelectAllRows.bind(this);
   }
 
   componentDidMount() {
     this.init();
   }
 
+  onSelectAllRows(isSelect, rows) {
+    for (let i = 0; i < this.state.data.subjects.length; i++) {
+      this.state.data.subjects[i].isSelected = isSelect;
+    }
+  }
+
   editSubjects(row, isSelected, e) {
-    for (let i = 0; i < this.temp.subjects.length; i++) {
-      if (this.temp.subjects[i].subjectID === row.subjectID) {
-        this.temp.subjects[i].isSelected = isSelected;
+    for (let i = 0; i < this.state.data.subjects.length; i++) {
+      if (this.state.data.subjects[i].subjectID === row.subjectID) {
+        this.state.data.subjects[i].isSelected = isSelected;
       }
     }
   }
@@ -41,7 +47,8 @@ class DashboardComponent extends Component {
     this.selectRowProp = {
       mode: 'checkbox',
       selected: [],
-      onSelect: this.editSubjects
+      onSelect: this.editSubjects,
+      onSelectAll: this.onSelectAllRows
     };
 
     if (localStorage.getItem("newUser") == "false") {
@@ -110,14 +117,15 @@ class DashboardComponent extends Component {
           }
         ]
       }
+
+      this.setState({ data: this.temp });
       this.temp.subjects.map((subject) => {
-        this.subjectsLocal.push(subject);
+        // this.updatedSubjects.push(subject);
         if (subject.isSelected) {
           this.selectRowProp.selected.push(subject.subjectID);
         }
       });
 
-      this.setState({ availableSubjects: this.temp.subjects });
     }
   }
 
@@ -135,24 +143,26 @@ class DashboardComponent extends Component {
   }
 
   submit() {
-    console.log(this.temp);
-    var source = window.document.getElementsByTagName("pdfPrint")[0];
-    var doc = new jsPDF()
+    var selectedAtLeastOne = false;
+    this.state.data.subjects.map((subject) => {
+      if (subject.isSelected) {
+        selectedAtLeastOne = true;
+      }
+    });
 
-    doc.fromHTML(document.getElementsByClassName('pdfPrint')[0], 15, 15)
-    doc.save('a4.pdf')
+    if (selectedAtLeastOne) {
+      var source = window.document.getElementsByTagName("pdfPrint")[0];
+      var doc = new jsPDF()
+
+      doc.fromHTML(document.getElementsByClassName('pdfPrint')[0], 15, 15)
+      doc.save('a4.pdf')
+    } else {
+      alert("Select at least one subjet!");
+    }
   }
 
   upload() {
-   alert(); 
-    //Send the document API
-    // axios.get("https://70a0e7ff-13e6-44fd-9d63-349e40cb7d00.mock.pstmn.io/api/getData").then(res => {
-    //     // this.setState({ availableSubjects: res.data});
-    //     this.setState({
-    //         availableSubjects: res.data.subjects.map((subject) =>
-    //             <li className="card" key={subject.name}>{subject.name}</li>)
-    //     })
-    // });
+    //Send the document to API
   }
 
   render() {
@@ -163,10 +173,10 @@ class DashboardComponent extends Component {
           <div className="card row my-5">
             <div className="card-body">
               <div className="container">
-                <IsNewUSer onFileChange={this.onFileChange} fileName={this.state.fileName} upload={this.upload}/>
+                <IsNewUSer onFileChange={this.onFileChange} fileName={this.state.fileName} upload={this.upload} />
                 <hr className="my-4" />
                 <div>
-                  <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.subjectsLocal}>
+                  <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.state.data.subjects}>
                     <TableHeaderColumn isKey dataField="subjectID" dataAlign="center">Subject ID</TableHeaderColumn>
                     <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
                   </BootstrapTable>
@@ -178,27 +188,27 @@ class DashboardComponent extends Component {
           </div>
         </div>
         <div className="pdfPrint hidden">
-          <table className="table">
-            <thead>
-              <tr>
-                <th scope="col">No.</th>
-                <th scope="col">Subject ID</th>
-                <th scope="col">Subject Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-              </tr>
-            </tbody>
-          </table>
+          <BootstrapTable version='4' className="table table-striped" data={this.state.data.subjects}>
+            <TableHeaderColumn isKey dataField="subjectID" dataAlign="center">Subject ID</TableHeaderColumn>
+            <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
+          </BootstrapTable>
         </div>
       </div>
     );
   }
 }
+
+// function PdfContent(props) {
+//   var subjectsSelected = [];
+//   if (props.data != "") {
+//     props.data.subjects.map((subject) => {
+//       if (subject.isSelected) {
+//         subjectsSelected.push(subject);
+//         console.log(subjectsSelected);
+//       }
+//     });
+//   }
+// }
 
 function IsNewUSer(props) {
   if (localStorage.getItem("newUser") == "true") {

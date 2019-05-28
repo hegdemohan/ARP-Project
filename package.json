@@ -7,6 +7,8 @@
     "bootstrap": "^4.3.1",
     "http-post": "^0.1.1",
     "jquery": "^3.4.1",
+    "jspdf": "^1.5.3",
+    "mdbreact": "^4.15.0",
     "react": "^16.8.6",
     "react-bootstrap-table": "^4.3.1",
     "react-dom": "^16.8.6",
