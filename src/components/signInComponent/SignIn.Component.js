@@ -5,6 +5,9 @@ var http = require("http");
 http.post = require("http-post");
 
 class SignInComponent extends Component {
+  login = "https://1478231e.ngrok.io/api/Login"
+  studentRequestData = "https://1478231e.ngrok.io/api/getStudentRequestData?type=all"
+  studentData = "https://1478231e.ngrok.io/api/getStudentData/"
   signInObject = {};
   constructor(props) {
     super(props);
@@ -18,29 +21,12 @@ class SignInComponent extends Component {
     this.onChange = this.onChange.bind(this);
     this.moveToRegistration = this.moveToRegistration.bind(this);
   }
-  // componentDidMount() {
-  //   const data = {
-  //     email: "1sri93ram@gmail.com",
-  //     password: "pass1234"
-  //   };
-  //   fetch("http://192.168.0.104:4005/api/login", {
-  //     method: "POST",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json",
-  //       "Access-Control-Allow-Headers": "*",
-  //       "Access-Control-Allow-origin": "*"
-  //     },
-  //     body: data
-  //   }).then(data => {
-  //     console.log(data);
-  //   });
-  // }
   async signIn(e) {
     e.preventDefault();
     await axios
       .post(
-        "http://192.168.0.102:4005/api/login",
+        // "http://192.168.0.102:4005/api/login",
+        this.login,
         {
           email: this.state.email,
           password: this.state.passWord
@@ -50,7 +36,8 @@ class SignInComponent extends Component {
         if (res.data.isAdmin) {
           axios
             .get(
-              "http://192.168.0.102:4005/api/getStudentRequestData?type=all"
+              // "http://192.168.0.102:4005/api/getStudentRequestData?type=all"
+              this.studentRequestData
             )
             .then(res => {
               console.log("Success");
@@ -60,7 +47,9 @@ class SignInComponent extends Component {
         else {
           axios
             .get(
-              "http://192.168.0.102:4005/api/getStudentData/" + res.data.studentID
+              // "http://192.168.0.102:4005/api/getStudentData/" + res.data.studentID
+              this.studentData + res.data.studentID
+
             )
             .then(resp => {
               console.log("Success");

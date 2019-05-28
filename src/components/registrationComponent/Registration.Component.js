@@ -22,7 +22,8 @@ class Registration extends Component {
         e.preventDefault();
         await axios
             .post(
-                "http://192.168.0.102:4005/api/register",
+                // "http://192.168.0.102:4005/api/register",
+                "https://1478231e.ngrok.io/api/register",
                 {
                     firstName: this.state.firstName,
                     lastName: this.state.lastName,
