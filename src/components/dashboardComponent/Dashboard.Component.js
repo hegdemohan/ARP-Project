@@ -2,13 +2,14 @@ import React, { Component } from "react";
 import "./Dashboard.Component.css";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import axios from "axios";
+import jsPDF from "jspdf"
 
 class DashboardComponent extends Component {
-  temp;
+  temp = {};
   afterSelction = {}
   selectRowProp = {}
   newUserDiv;
-  subjectsLocal=[];
+  subjectsLocal = [];
   constructor(props) {
     super(props);
     this.state = {
@@ -28,9 +29,9 @@ class DashboardComponent extends Component {
     this.init();
   }
 
-  editSubjects(row, isSelected, e){
-    for(let i = 0; i < this.temp.subjects.length; i++){
-      if(this.temp.subjects[i].subjectID === row.subjectID){
+  editSubjects(row, isSelected, e) {
+    for (let i = 0; i < this.temp.subjects.length; i++) {
+      if (this.temp.subjects[i].subjectID === row.subjectID) {
         this.temp.subjects[i].isSelected = isSelected;
       }
     }
@@ -109,13 +110,13 @@ class DashboardComponent extends Component {
           }
         ]
       }
-      this.temp.subjects.map((subject) =>{
+      this.temp.subjects.map((subject) => {
         this.subjectsLocal.push(subject);
-        if(subject.isSelected){
-            this.selectRowProp.selected.push(subject.subjectID);
+        if (subject.isSelected) {
+          this.selectRowProp.selected.push(subject.subjectID);
         }
       });
-          
+
       this.setState({ availableSubjects: this.temp.subjects });
     }
   }
@@ -133,11 +134,17 @@ class DashboardComponent extends Component {
     this.setState({ fileName: e.target.files[0].name });
   }
 
-  submit(){
+  submit() {
     console.log(this.temp);
+    var source = window.document.getElementsByTagName("pdfPrint")[0];
+    var doc = new jsPDF()
+
+    doc.fromHTML(document.getElementsByClassName('pdfPrint')[0], 15, 15)
+    doc.save('a4.pdf')
   }
 
   upload() {
+   alert(); 
     //Send the document API
     // axios.get("https://70a0e7ff-13e6-44fd-9d63-349e40cb7d00.mock.pstmn.io/api/getData").then(res => {
     //     // this.setState({ availableSubjects: res.data});
@@ -149,26 +156,44 @@ class DashboardComponent extends Component {
   }
 
   render() {
-    
+
     return (
       <div className="container">
         <div className="mx-auto">
           <div className="card row my-5">
             <div className="card-body">
               <div className="container">
-                <IsNewUSer />
+                <IsNewUSer onFileChange={this.onFileChange} fileName={this.state.fileName} upload={this.upload}/>
                 <hr className="my-4" />
                 <div>
-                  <BootstrapTable version='4' selectRow={ this.selectRowProp } className="table table-striped" data={this.subjectsLocal}>
+                  <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.subjectsLocal}>
                     <TableHeaderColumn isKey dataField="subjectID" dataAlign="center">Subject ID</TableHeaderColumn>
                     <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
                   </BootstrapTable>
-                  <hr className="my-4"/>
+                  <hr className="my-4" />
                   <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.submit}>Submit</button>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        <div className="pdfPrint hidden">
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">No.</th>
+                <th scope="col">Subject ID</th>
+                <th scope="col">Subject Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     );
