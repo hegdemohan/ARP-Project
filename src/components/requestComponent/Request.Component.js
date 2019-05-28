@@ -23,6 +23,7 @@ class RequestComponent extends Component {
         this.setState({
           studentObj: [...this.state.studentObj, ...res.data]
         });
+        // console.log(this.state.studentObj)
       });
   }
 
