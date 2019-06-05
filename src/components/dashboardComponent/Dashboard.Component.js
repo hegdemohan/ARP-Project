@@ -27,7 +27,9 @@ class DashboardComponent extends Component {
     this.submit = this.submit.bind(this);
     this.editSubjects = this.editSubjects.bind(this);
     this.onSelectAllRows = this.onSelectAllRows.bind(this);
-    this.renderTable = this.renderTable.bind(this)
+    this.renderTable = this.renderTable.bind(this);
+    this.getSubjects = this.getSubjects.bind(this);
+    this.pdfDownload = this.pdfDownload.bind(this);
   }
 
   componentDidMount() {
@@ -57,6 +59,15 @@ class DashboardComponent extends Component {
     };
 
     if (localStorage.getItem("newUser") == "false") {
+      var studentData = JSON.parse(localStorage.getItem("StudentData"));
+      this.setState({ data: studentData.subjects });
+
+      studentData.subjects.map((subject) => {
+        // this.updatedSubjects.push(subject);
+        if (subject.isSelected) {
+          this.selectRowProp.selected.push(subject.module);
+        }
+      });
     }
   }
 
@@ -75,8 +86,6 @@ class DashboardComponent extends Component {
   }
 
   submit() {
-    this.renderTable(this.state.data); //function to add the table with selected subjects for downloading
-
     var selectedAtLeastOne = false;
     this.state.data.map((subject) => {
       if (subject.isSelected) {
@@ -85,9 +94,26 @@ class DashboardComponent extends Component {
     });
 
     if (selectedAtLeastOne) {
-      var doc = new jsPDF()
-      doc.fromHTML(document.getElementsByClassName('pdfPrint')[0], 15, 15)
-      doc.save('Selected_Subjects.pdf')
+      var studentData = JSON.parse(localStorage.getItem('StudentData'));
+      var data = {
+        "firstName": studentData.firstName,
+        "lastName": studentData.lastName,
+        "matriculationNumber": studentData.matriculationNumber,
+        "studentID": studentData.studentID,
+        "subjects": this.state.data,
+        "transcript": {
+          "fileData": this.state.base64,
+          "fileName": this.state.fileName
+        },
+        "isUpdate": false
+      }
+      axios
+        .post(
+          "https://d1c21ad1.ngrok.io/api/saveStudentData", data
+        )
+        .then(res => {
+          console.log(res.data);
+        });
     } else {
       alert("Select at least one subject!");
     }
@@ -119,27 +145,47 @@ class DashboardComponent extends Component {
       .then(res => {
         console.log(res.data);
       })
+    this.getSubjects();
+    //Send the document to API
+  }
 
+  pdfDownload() {
+    var selectedAtLeastOne = false;
+    this.state.data.map((subject) => {
+      if (subject.isSelected) {
+        selectedAtLeastOne = true;
+      }
+    });
+
+    if (selectedAtLeastOne) {
+      this.renderTable(this.state.data); //function to add the table with selected subjects for downloading
+      var doc = new jsPDF()
+      doc.fromHTML(document.getElementsByClassName('pdfPrint')[0], 15, 15)
+      doc.save('Selected_Subjects.pdf')
+    } else {
+      alert("Select at least one subject!");
+    }
+  }
+
+  getSubjects() {
     axios
       .get(
         "https://1478231e.ngrok.io/api/Subject/getSubjects"
         // this.studentRequestData
       )
       .then(res => {
-        console.log("Success");
         // this.props.history.push("/requests/");
-
-
 
         this.setState({ data: res.data });
         res.data.map((subject) => {
           // this.updatedSubjects.push(subject);
           if (subject.isSelected) {
-            this.selectRowProp.selected.push(subject.subjectID);
+            this.selectRowProp.selected.push(subject.module);
+            // console.log(this.selectRowProp.selected)
           }
         });
+        // console.log(this.selectRowProp)
       });
-    //Send the document to API
   }
 
   render() {
@@ -158,7 +204,14 @@ class DashboardComponent extends Component {
                     <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
                   </BootstrapTable>
                   <hr className="my-4" />
-                  <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.submit}>Submit</button>
+                  <div className="row">
+                    <div className="col-6">
+                      <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.submit}>Submit</button>
+                    </div>
+                    <div className="col-6">
+                      <button className="btn btn-lg btn-secondary btn-block text-uppercase" type="submit" onClick={this.pdfDownload}>Download PDF</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,0 +1,16 @@
+.dropdown-toggle {
+  float: left;
+}
+.r1 {
+  float: right;
+  /* clear: all; */
+}
+.sub {
+  margin: 10px;
+}
+.req {
+  margin-top: 70px;
+}
+.c1 {
+  margin-top: 30px;
+}

@@ -1,0 +1,22 @@
+.card-student {
+  width: 800px;
+  border: 0;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+  position: absolute;
+  margin-left: -175px;
+}
+
+.card-student .card-title {
+  margin-bottom: 2rem;
+  font-weight: 300;
+  font-size: 1.5rem;
+}
+
+.card-student .card-body {
+  padding: 2rem;
+}
+
+.button {
+  margin-left: 335px;
+}
