@@ -35,7 +35,7 @@ class Registration extends Component {
             await axios
                 .post(
                     // "http://192.168.0.102:4005/api/register",
-                    "https://99a1aa37.ngrok.io/api/register",
+                    "https://396603ad.ngrok.io/api/register",
                     {
                         firstName: this.state.firstName,
                         lastName: this.state.lastName,
@@ -136,7 +136,7 @@ class Registration extends Component {
                     ...prevState.loginDetails,
                     email: that
                 }
-            }),() => {
+            }), () => {
                 if (this.state.registerClicked) {
                     this.validData();
                 }
@@ -148,7 +148,7 @@ class Registration extends Component {
                     ...prevState.loginDetails,
                     password: that
                 }
-            }),() => {
+            }), () => {
                 if (this.state.registerClicked) {
                     this.validData();
                 }

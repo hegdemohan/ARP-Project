@@ -5,7 +5,6 @@ import axios from "axios";
 import ReactDOM from 'react-dom';
 import jsPDF from "jspdf"
 import createReactClass from "create-react-class"
-import { NONAME } from "dns";
 
 class DashboardComponent extends Component {
   afterSelction = {}
@@ -132,10 +131,11 @@ class DashboardComponent extends Component {
       }
       axios
         .post(
-          "https://99a1aa37.ngrok.io/api/saveStudentData", data
+          "https://396603ad.ngrok.io/api/saveStudentData", data
         )
         .then(res => {
-          console.log(res.data);
+          console.log("Submitted", res.data);
+          this.props.history.push('/studentDetails/');
         });
     } else {
       alert("Select at least one subject!");
@@ -215,7 +215,7 @@ class DashboardComponent extends Component {
   getSubjects() {
     axios
       .get(
-        "https://1478231e.ngrok.io/api/Subject/getSubjects"
+        "https://396603ad.ngrok.io/api/Subject/getSubjects"
         // this.studentRequestData
       )
       .then(res => {

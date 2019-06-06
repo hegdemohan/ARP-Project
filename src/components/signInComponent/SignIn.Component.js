@@ -5,9 +5,9 @@ var http = require("http");
 http.post = require("http-post");
 
 class SignInComponent extends Component {
-  login = "https://99a1aa37.ngrok.io/api/Login"
-  studentRequestData = "https://99a1aa37.ngrok.io/api/getStudentRequestData?type=all"
-  studentData = "https://99a1aa37.ngrok.io/api/getStudentData/"
+  login = "https://396603ad.ngrok.io/api/Login"
+  studentRequestData = "https://396603ad.ngrok.io/api/getStudentRequestData?type=all"
+  studentData = "https://396603ad.ngrok.io/api/getStudentData/"
   signInObject = {};
   constructor(props) {
     super(props);

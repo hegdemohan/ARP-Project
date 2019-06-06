@@ -9,7 +9,8 @@ class StudentDetails extends Component {
         super(props)
         this.state = {
             subjectsObject: '',
-            userDetailsObject: {}
+            userDetailsObject: {},
+            newUser: false
 
         }
         this.init = this.init.bind(this);
@@ -44,9 +45,9 @@ class StudentDetails extends Component {
         // this.state.userDetailsObject.lastName = data.lastName;
         // this.state.userDetailsObject.matriculationNo = data.matriculationNumber;
         if (data.subjects.length == 0) {
-            this.state.userDetailsObject.newUser = true;
+            this.state.newUser = true;
         } else {
-            this.state.userDetailsObject.newUser = false;
+            this.state.newUser = false;
         }
     }
 
@@ -67,15 +68,15 @@ class StudentDetails extends Component {
                                 <hr className="my-4"></hr>
                                 <div className="row">
                                     <div className="col-6">
-                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.state.userDetailsObject.newUser} onClick={() => this.navigate('new')}>Add new</button>
+                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.state.newUser} onClick={() => this.navigate('new')}>Add new</button>
                                     </div>
                                     <div className="col-6">
-                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.state.userDetailsObject.newUser} onClick={() => this.navigate('edit')}>Edit</button>
+                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.state.newUser} onClick={() => this.navigate('edit')}>Edit</button>
                                     </div>
                                 </div>
                                 <div className="row my-4">
                                     <div className="col-12">
-                                        <button className="general-button btn btn-lg btn-success btn-block text-uppercase" type="submit" disabled={this.state.userDetailsObject.newUser} onClick={() => this.navigate('statusCheck')}>Check Status</button>
+                                        <button className="general-button btn btn-lg btn-success btn-block text-uppercase" type="submit" disabled={this.state.newUser} onClick={() => this.navigate('statusCheck')}>Check Status</button>
                                     </div>
                                 </div>
                             </div>

@@ -5,6 +5,7 @@ import axios from 'axios';
 
 class StudentRequest extends Component {
     StudentData;
+    selectedSubjects = [];
     constructor(props) {
         super(props)
         this.state = {
@@ -20,10 +21,6 @@ class StudentRequest extends Component {
 
     }
     componentDidMount() {
-        this.init();
-    }
-
-    init() {
         this.selectRowProp = {
             mode: 'checkbox',
             selected: [],
@@ -31,14 +28,20 @@ class StudentRequest extends Component {
             // selected: false
             // unelectable: ["row1"]
         };
-        this.StudentData = JSON.parse(localStorage.getItem("UserDetail"));
+        this.StudentData = JSON.parse(localStorage.getItem("StudentRequestData"));
         console.log(this.StudentData);
         this.setState({ data: this.StudentData });
         this.setState({ dataSubs: this.StudentData.subjects });
+        this.init();
+    }
+
+    init() {
         this.StudentData.subjects.map((subject) => {
             // this.updatedSubjects.push(subject);
             if (subject.isSelected) {
                 this.selectRowProp.selected.push(subject.module);
+                this.selectedSubjects.push(subject);
+
             }
         });
     }
@@ -51,11 +54,11 @@ class StudentRequest extends Component {
         }
         this.state.dataSubs.map((subject) => {
             if (!(subject.isSelected)) {
-                subject.isSelected = true;
+                // subject.isSelected = true;
                 subject.isRejectedByAdmin = true;
             }
             else {
-                subject.isSelected = true;
+                // subject.isSelected = true;
                 subject.isRejectedByAdmin = false;
             }
         });
@@ -90,11 +93,12 @@ class StudentRequest extends Component {
         }
         axios
             .post(
-                "https://99a1aa37.ngrok.io/api/approveLearningAgreement", postData
+                "https://396603ad.ngrok.io/api/approveLearningAgreement", postData
             )
             .then(res => {
                 console.log("Approved");
                 console.log(res.data);
+                this.props.history.push("/requests/");
             });
     }
     render() {
@@ -112,7 +116,7 @@ class StudentRequest extends Component {
                                     <div className="col-6">Last Name:</div><div className="col-6">{this.state.data.lastName}</div>
                                     <div className="col-6">Matriculation Number:</div><div className="col-6">{this.state.data.matriculationNumber}</div>
                                     <h2 className="col-12 my-3">Requested Subjects:</h2>
-                                    <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.state.data.subjects}>
+                                    <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.selectedSubjects}>
                                         <TableHeaderColumn isKey dataField="module" dataAlign="center">Subject ID</TableHeaderColumn>
                                         <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
                                     </BootstrapTable>

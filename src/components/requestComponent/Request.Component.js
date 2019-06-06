@@ -26,7 +26,7 @@ class RequestComponent extends Component {
     //Send the document API
     axios
       // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
-      .get("https://99a1aa37.ngrok.io/api/getStudentRequestData?type=all")
+      .get("https://396603ad.ngrok.io/api/getStudentRequestData?type=all")
       .then(res => {
         this.setState({
           allStudentObj: [...this.state.allStudentObj, ...res.data]
@@ -35,7 +35,7 @@ class RequestComponent extends Component {
       });
     axios
       // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
-      .get("https://99a1aa37.ngrok.io/api/getStudentRequestData?type=pending")
+      .get("https://396603ad.ngrok.io/api/getStudentRequestData?type=pending")
       .then(res => {
         this.setState({
           pendStudentObj: [...this.state.pendStudentObj, ...res.data]
@@ -44,7 +44,7 @@ class RequestComponent extends Component {
       });
     axios
       // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
-      .get("https://99a1aa37.ngrok.io/api/getStudentRequestData?type=approved")
+      .get("https://396603ad.ngrok.io/api/getStudentRequestData?type=approved")
       .then(res => {
         this.setState({
           apprStudentObj: [...this.state.apprStudentObj, ...res.data]
@@ -66,9 +66,19 @@ class RequestComponent extends Component {
             // this.setState({ studentSub: row });
             this.studentSub = row;
             console.log(this.studentSub);
-            localStorage.setItem("UserDetail", JSON.stringify(row));
+            // localStorage.setItem("UserDetail", JSON.stringify(row));
             // go to the detail product page
-            history.push("/StudentRequest/")
+            axios
+              .get(
+                "https://396603ad.ngrok.io/api/getStudentData/" + row.studentID
+
+              )
+              .then(resp => {
+                console.log("Success request");
+                localStorage.setItem("StudentRequestData", JSON.stringify(resp.data));
+                history.push("/StudentRequest/")
+
+              });
           }}>
           <i className="fa fa-angle-double-right"></i>
         </a>
