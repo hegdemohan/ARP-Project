@@ -54,19 +54,23 @@ class RequestComponent extends Component {
   }
 
   colFormatter = (cell, row) => {
+
     // const href = row.id;
     // console.log(row);
     return (
       <Route render={({ history }) => (
         <a href="#" style={{ cursor: 'pointer' }}
           onClick={(e) => {
+            var loader = document.getElementById("loader");
+            loader.className = "fullScreen";
+            loader.firstChild.style.display = "inline-block";
             // stop default behavior a href
             e.preventDefault();
             // set state selected product id
             // this.setState({ studentSub: row });
             this.studentSub = row;
             console.log(this.studentSub);
-            // localStorage.setItem("UserDetail", JSON.stringify(row));
+            localStorage.setItem("UserDetail", JSON.stringify(row));
             // go to the detail product page
             axios
               .get(
@@ -74,6 +78,8 @@ class RequestComponent extends Component {
 
               )
               .then(resp => {
+                loader.className = "";
+                loader.firstChild.style.display = "none";
                 console.log("Success request");
                 localStorage.setItem("StudentRequestData", JSON.stringify(resp.data));
                 history.push("/StudentRequest/")
@@ -95,37 +101,42 @@ class RequestComponent extends Component {
 
   render() {
     return (
-      <div className="container" >
-        <div className="mx-auto">
-          <div className="card row my-5">
-            <div className="card-body">
-              <div className="row r1">
-                <button className="btn btn-primary sub" onClick={this.manageSubs}>Manage Subjects</button>
+      <div>
+        <div id="loader">
+          <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+        <div className="container" >
+          <div className="mx-auto">
+            <div className="card row my-5">
+              <div className="card-body">
+                <div className="row r1">
+                  <button className="btn btn-primary sub" onClick={this.manageSubs}>Manage Subjects</button>
+                </div>
+                <Tabs className="allTabs" selectedIndex={this.state.tabIndex} onSelect={tabIndex => this.setState({ tabIndex })}>
+                  <TabList>
+                    <Tab >ALL</Tab>
+                    <Tab>PENDING</Tab>
+                    <Tab>APPROVED</Tab>
+                  </TabList>
+
+                  <TabPanel>
+                    <div className="container req">
+                      <AllComponent data={this.state.allStudentObj} />
+                    </div>
+                  </TabPanel>
+                  <TabPanel>
+                    <div className="container req">
+                      <PendingRequestComponent data={this.state.pendStudentObj} colFormatter={this.colFormatter} />
+                    </div>
+                  </TabPanel>
+                  <TabPanel>
+                    <div className="container req">
+                      <ApprovedComponent data={this.state.apprStudentObj} />
+                    </div>
+                  </TabPanel>
+                </Tabs>
+
               </div>
-              <Tabs className="allTabs" selectedIndex={this.state.tabIndex} onSelect={tabIndex => this.setState({ tabIndex })}>
-                <TabList>
-                  <Tab >ALL</Tab>
-                  <Tab>PENDING</Tab>
-                  <Tab>APPROVED</Tab>
-                </TabList>
-
-                <TabPanel>
-                  <div className="container req">
-                    <AllComponent data={this.state.allStudentObj} />
-                  </div>
-                </TabPanel>
-                <TabPanel>
-                  <div className="container req">
-                    <PendingRequestComponent data={this.state.pendStudentObj} colFormatter={this.colFormatter} />
-                  </div>
-                </TabPanel>
-                <TabPanel>
-                  <div className="container req">
-                    <ApprovedComponent data={this.state.apprStudentObj} />
-                  </div>
-                </TabPanel>
-              </Tabs>
-
             </div>
           </div>
         </div>

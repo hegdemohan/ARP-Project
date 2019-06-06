@@ -30,12 +30,17 @@ class EditSubject extends Component {
     }
 
     componentDidMount() {
+        var loader = document.getElementById("loader");
+        loader.className = "fullScreen";
+        loader.firstChild.style.display = "inline-block";
         axios
             .get(
                 "https://396603ad.ngrok.io/api/Subject/getSubjects"
 
             )
             .then(resp => {
+                loader.className = "";
+                loader.firstChild.style.display = "none";
                 // console.log("Success");
                 this.setState({ Subs: resp.data });
             });
@@ -50,6 +55,9 @@ class EditSubject extends Component {
 
     submitModal(e) {
         e.preventDefault();
+        var loader = document.getElementById("loader");
+        loader.className = "fullScreen";
+        loader.firstChild.style.display = "inline-block";
         axios
             .post(
                 "https://396603ad.ngrok.io/api/Subject/addSubject", {
@@ -66,6 +74,8 @@ class EditSubject extends Component {
 
                     )
                     .then(resp => {
+                        loader.className = "";
+                        loader.firstChild.style.display = "none";
                         console.log("Success adding");
                         this.setState({ Subs: resp.data });
                     });
@@ -97,6 +107,9 @@ class EditSubject extends Component {
 
     submitDelModal(e) {
         e.preventDefault();
+        var loader = document.getElementById("loader");
+        loader.className = "fullScreen";
+        loader.firstChild.style.display = "inline-block";
         axios
             .put(
                 "https://396603ad.ngrok.io/api/Subject/updateSubject", {
@@ -112,6 +125,8 @@ class EditSubject extends Component {
 
                     )
                     .then(resp => {
+                        loader.className = "";
+                        loader.firstChild.style.display = "none";
                         console.log("deleted");
                         // console.log("Success");
                         this.setState({ Subs: resp.data });
@@ -195,91 +210,96 @@ class EditSubject extends Component {
     render() {
 
         return (
-            <div className="container">
-                <div className="mx-auto">
-                    <div className="card row my-5">
-                        <a href="#" onClick={this.openModal} className="fa-icons-lay">
-                            <i className="fa fa-plus"> ADD SUBJECT</i>
-                        </a>
-                        <div className="card-body">
-                            <i className="text-infos">Please double click on the text field to edit</i>
-                            <BootstrapTable className="table table-striped" data={this.state.Subs} cellEdit={this.cellEditProp}>
-                                <TableHeaderColumn isKey dataField="subjectID" dataAlign="center">Subject ID</TableHeaderColumn>
-                                <TableHeaderColumn dataField="module" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">Module</TableHeaderColumn>
-                                <TableHeaderColumn dataField="subjectName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">Subject Name</TableHeaderColumn>
-                                <TableHeaderColumn dataField='edit' dataFormat={this.editFormatter} editable={false} dataAlign="center">Delete Subject</TableHeaderColumn>
-                                {/* <TableHeaderColumn width={'180'} dataField='id' dataFormat={props.colFormatter} dataAlign="center">Link</TableHeaderColumn> */}
-                            </BootstrapTable>
-                        </div>
-                    </div>
-                    <Modal visible={this.state.delVisible} width="600" height="300" effect="fadeInUp" onClickAway={() => this.closeDelModal()}>
-                        <div className="container c1">
-                            <div className="row">
-                                <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                                    <h5 className="text-center">CONFIRMATION</h5>
-                                    <hr className="my-4" />
-                                    <p>Are you sure want to delete this Subject?</p>
-                                    <form className="form-signin">
-                                        <button className="btn btn-lg btn-primary my-2 delBtn btn-block text-uppercase" onClick={this.submitDelModal}>Delete</button>
-                                        <button className="btn btn-lg btn-secondary btn-block text-uppercase" onClick={this.closeDelModal1}>Cancel</button>
-                                    </form>
-                                </div>
+            <div>
+                <div id="loader">
+                    <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+                <div className="container">
+                    <div className="mx-auto">
+                        <div className="card row my-5">
+                            <a href="#" onClick={this.openModal} className="fa-icons-lay">
+                                <i className="fa fa-plus"> ADD SUBJECT</i>
+                            </a>
+                            <div className="card-body">
+                                <i className="text-infos">Please double click on the text field to edit</i>
+                                <BootstrapTable className="table table-striped" data={this.state.Subs} cellEdit={this.cellEditProp}>
+                                    <TableHeaderColumn isKey dataField="subjectID" dataAlign="center">Subject ID</TableHeaderColumn>
+                                    <TableHeaderColumn dataField="module" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">Module</TableHeaderColumn>
+                                    <TableHeaderColumn dataField="subjectName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">Subject Name</TableHeaderColumn>
+                                    <TableHeaderColumn dataField='edit' dataFormat={this.editFormatter} editable={false} dataAlign="center">Delete Subject</TableHeaderColumn>
+                                    {/* <TableHeaderColumn width={'180'} dataField='id' dataFormat={props.colFormatter} dataAlign="center">Link</TableHeaderColumn> */}
+                                </BootstrapTable>
                             </div>
                         </div>
-                    </Modal>
-                    <Modal visible={this.state.visible} width="650" height="500" effect="fadeInUp" onClickAway={() => this.closeSubModal()}>
-                        <div className="container c1">
-                            <div className="row">
-                                <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                                    <h5 className="text-center">Subject Details</h5>
-                                    <hr className="my-4" />
-                                    <p className="text-infos">Please enter all the fields</p>
-                                    {/* <h5 className="card-title text-center">Sign In</h5> */}
-                                    <form className="form-signin" onSubmit={this.submitModal}>
-                                        <div className="form-label-group">
-                                            <input
-                                                type="subjectModule"
-                                                id="subjectModule"
-                                                name="module"
-                                                className="form-control text-center"
-                                                // placeholder="subjectModule address"
-                                                // onChange={this.onChange}
-                                                required
-                                            />
-                                            <label htmlFor="subjectModule">Subject Module</label>
-                                        </div>
-                                        <div className="form-label-group">
-                                            <input
-                                                type="subjectName"
-                                                id="subjectName"
-                                                name="subName"
-                                                className="form-control text-center"
-                                                // placeholder="Mobile subjectName"
-                                                // onChange={this.onChange}
-                                                required
-                                            />
-                                            <label htmlFor="subjectName">Subject Name</label>
-                                        </div>
-                                        <div className="errormsg my-3">
-                                            {this.state.errorData}
-                                        </div>
-                                        <button
-                                            className="btn btn-lg btn-primary btn-block text-uppercase"
-                                            type="submit"
-                                        >
-                                            SUBMIT
+                        <Modal visible={this.state.delVisible} width="600" height="300" effect="fadeInUp" onClickAway={() => this.closeDelModal()}>
+                            <div className="container c1">
+                                <div className="row">
+                                    <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                                        <h5 className="text-center">CONFIRMATION</h5>
+                                        <hr className="my-4" />
+                                        <p>Are you sure want to delete this Subject?</p>
+                                        <form className="form-signin">
+                                            <button className="btn btn-lg btn-primary my-2 delBtn btn-block text-uppercase" onClick={this.submitDelModal}>Delete</button>
+                                            <button className="btn btn-lg btn-secondary btn-block text-uppercase" onClick={this.closeDelModal1}>Cancel</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </Modal>
+                        <Modal visible={this.state.visible} width="650" height="500" effect="fadeInUp" onClickAway={() => this.closeSubModal()}>
+                            <div className="container c1">
+                                <div className="row">
+                                    <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                                        <h5 className="text-center">Subject Details</h5>
+                                        <hr className="my-4" />
+                                        <p className="text-infos">Please enter all the fields</p>
+                                        {/* <h5 className="card-title text-center">Sign In</h5> */}
+                                        <form className="form-signin" onSubmit={this.submitModal}>
+                                            <div className="form-label-group">
+                                                <input
+                                                    type="subjectModule"
+                                                    id="subjectModule"
+                                                    name="module"
+                                                    className="form-control text-center"
+                                                    // placeholder="subjectModule address"
+                                                    // onChange={this.onChange}
+                                                    required
+                                                />
+                                                <label htmlFor="subjectModule">Subject Module</label>
+                                            </div>
+                                            <div className="form-label-group">
+                                                <input
+                                                    type="subjectName"
+                                                    id="subjectName"
+                                                    name="subName"
+                                                    className="form-control text-center"
+                                                    // placeholder="Mobile subjectName"
+                                                    // onChange={this.onChange}
+                                                    required
+                                                />
+                                                <label htmlFor="subjectName">Subject Name</label>
+                                            </div>
+                                            <div className="errormsg my-3">
+                                                {this.state.errorData}
+                                            </div>
+                                            <button
+                                                className="btn btn-lg btn-primary btn-block text-uppercase"
+                                                type="submit"
+                                            >
+                                                SUBMIT
                       </button>
-                                        <button
-                                            className="btn btn-lg btn-secondary btn-block text-uppercase" onClick={this.closeSubModal1}
+                                            <button
+                                                className="btn btn-lg btn-secondary btn-block text-uppercase" onClick={this.closeSubModal1}
 
-                                        >
-                                            CANCEL
+                                            >
+                                                CANCEL
                       </button>
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </Modal>
+                        </Modal>
+                    </div>
                 </div>
             </div>
 

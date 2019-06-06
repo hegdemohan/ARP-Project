@@ -37,7 +37,9 @@ class SignInComponent extends Component {
         },
       )
       .then(res => {
-        if (res.data.isAdmin) {
+        console.log(res);
+        console.log(res.data);
+        if (res.statusText != "No Content" && (res.data != undefined || res.data != "") && res.data.isAdmin) {
           axios
             .get(
               // "http://192.168.0.102:4005/api/getStudentRequestData?type=all"
@@ -49,7 +51,7 @@ class SignInComponent extends Component {
               this.props.history.push("/requests/");
             });
         }
-        else {
+        else if (res.statusText != "No Content" && (res.data != undefined || res.data != "")) {
           axios
             .get(
               // "http://192.168.0.102:4005/api/getStudentData/" + res.data.studentID
@@ -63,6 +65,16 @@ class SignInComponent extends Component {
               this.props.history.push("/studentDetails/");
             });
         }
+      }).catch(error => {
+        console.log(error.response);
+        // if (error.response.status == 409) {
+        //     this.setState(prevState => ({
+        //         errorData: {
+        //             ...prevState.errorData,
+        //             errorUserExist: "Matriculation Number or Email Address already exists"
+        //         }
+        //     }))
+        // }
       });
   }
 

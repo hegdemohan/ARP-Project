@@ -10,6 +10,7 @@ class DashboardComponent extends Component {
   afterSelction = {}
   selectRowProp = {}
   newUserDiv;
+  loader;
   // updatedSubjects = [];
   constructor(props) {
     super(props);
@@ -74,7 +75,7 @@ class DashboardComponent extends Component {
       unselectable: []
       // bgColor: this.bgColorRows
     };
-
+    this.loader = document.getElementById("loader");
     if (localStorage.getItem("newUser") == "false") {
       var studentData = JSON.parse(localStorage.getItem("StudentData"));
       this.setState({ data: studentData.subjects });
@@ -108,6 +109,8 @@ class DashboardComponent extends Component {
   }
 
   submit() {
+    this.loader.className = "fullScreen";
+    this.loader.firstChild.style.display = "inline-block";
     var selectedAtLeastOne = false;
     this.state.data.map((subject) => {
       if (subject.isSelected) {
@@ -134,7 +137,8 @@ class DashboardComponent extends Component {
           "https://396603ad.ngrok.io/api/saveStudentData", data
         )
         .then(res => {
-          console.log("Submitted", res.data);
+          this.loader.className = "";
+          this.loader.firstChild.style.display = "none";
           this.props.history.push('/studentDetails/');
         });
     } else {
@@ -180,6 +184,8 @@ class DashboardComponent extends Component {
   }
 
   upload() {
+    this.loader.className = "fullScreen";
+    this.loader.firstChild.style.display = "inline-block";
     // console.log(this.state.base64);
     var formData = new FormData();
     formData.set('base64Image', this.state.base64)
@@ -188,7 +194,8 @@ class DashboardComponent extends Component {
         "https://api.ocr.space/parse/image", formData, { headers: { "apikey": this.state.apikey, "Content-Type": 'form-data' } }
       )
       .then(res => {
-        console.log(res.data);
+        this.loader.className = "";
+        this.loader.firstChild.style.display = "none";
       })
     this.getSubjects();
     //Send the document to API
@@ -213,12 +220,16 @@ class DashboardComponent extends Component {
   }
 
   getSubjects() {
+    this.loader.className = "fullScreen";
+    this.loader.firstChild.style.display = "inline-block";
     axios
       .get(
         "https://396603ad.ngrok.io/api/Subject/getSubjects"
         // this.studentRequestData
       )
       .then(res => {
+        this.loader.className = "";
+        this.loader.firstChild.style.display = "none";
         // this.props.history.push("/requests/");
 
         this.setState({ data: res.data });
@@ -236,34 +247,39 @@ class DashboardComponent extends Component {
   render() {
 
     return (
-      <div className="container">
-        <div className="mx-auto">
-          <div className="card row my-5">
-            <div className="card-body">
-              <div className="container">
-                <IsNewUSer onFileChange={this.onFileChange} fileName={this.state.fileName} upload={this.upload} />
-                <hr className="my-4" />
-                <div>
-                  <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.state.data}>
-                    <TableHeaderColumn isKey dataField="module" dataAlign="center">Subject ID</TableHeaderColumn>
-                    <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
-                    {/* <TableHeaderColumn dataField="status" dataFormat={this.colFormatter} dataAlign="center">Admin Status</TableHeaderColumn> */}
-                  </BootstrapTable>
+      <div>
+        <div id="loader">
+          <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+        <div className="container">
+          <div className="mx-auto">
+            <div className="card row my-5">
+              <div className="card-body">
+                <div className="container">
+                  <IsNewUSer onFileChange={this.onFileChange} fileName={this.state.fileName} upload={this.upload} />
                   <hr className="my-4" />
-                  <div className="row">
-                    <div className="col-6">
-                      <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.submit}>Submit</button>
-                    </div>
-                    <div className="col-6">
-                      <button className="btn btn-lg btn-secondary btn-block text-uppercase" type="submit" onClick={this.pdfDownload}>Download PDF</button>
+                  <div>
+                    <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.state.data}>
+                      <TableHeaderColumn isKey dataField="module" dataAlign="center">Subject ID</TableHeaderColumn>
+                      <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
+                      {/* <TableHeaderColumn dataField="status" dataFormat={this.colFormatter} dataAlign="center">Admin Status</TableHeaderColumn> */}
+                    </BootstrapTable>
+                    <hr className="my-4" />
+                    <div className="row">
+                      <div className="col-6">
+                        <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.submit}>Submit</button>
+                      </div>
+                      <div className="col-6">
+                        <button className="btn btn-lg btn-secondary btn-block text-uppercase" type="submit" onClick={this.pdfDownload}>Download PDF</button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="pdfPrint hidden">
+          <div className="pdfPrint hidden">
+          </div>
         </div>
       </div>
     );

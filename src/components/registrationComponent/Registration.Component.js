@@ -32,6 +32,9 @@ class Registration extends Component {
         e.preventDefault();
         this.state.registerClicked = true;
         if (this.validData()) {
+            var loader = document.getElementById("loader");
+            loader.className = "fullScreen";
+            loader.firstChild.style.display = "inline-block";
             await axios
                 .post(
                     // "http://192.168.0.102:4005/api/register",
@@ -47,9 +50,13 @@ class Registration extends Component {
                     },
                 )
                 .then(res => {
+                    loader.className = "";
+                    loader.firstChild.style.display = "none";
                     this.props.history.push("/signin/");
                 })
                 .catch(error => {
+                    loader.className = "";
+                    loader.firstChild.style.display = "none";
                     if (error.response.status == 409) {
                         this.setState(prevState => ({
                             errorData: {
@@ -165,58 +172,63 @@ class Registration extends Component {
     }
     render() {
         return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                        <div className="card card-signin my-5">
-                            <div className="card-body">
-                                <h5 className="card-title text-center">Registration Form</h5>
-                                <form className="form-signin">
-                                    <div className="form-label-group">
-                                        <input type="text" id="firstName" className="form-control text-center" placeholder="First Name" onChange={this.onChange} required />
-                                        <label htmlFor="firstName">First Name</label>
-                                    </div>
-                                    <div className="errormsg my-3">
-                                        {this.state.errorData.errorFirstName}
-                                    </div>
-                                    <div className="form-label-group">
-                                        <input type="text" id="lastName" className="form-control text-center" placeholder="Last Name" onChange={this.onChange} required />
-                                        <label htmlFor="lastName">Last Name</label>
-                                    </div>
-                                    <div className="errormsg my-3">
-                                        {this.state.errorData.errorLastName}
-                                    </div>
-                                    <div className="form-label-group">
-                                        <input type="number" id="matriculationNumber" className="form-control text-center" placeholder="Matriculation Number" onChange={this.onChange} required />
-                                        <label htmlFor="matriculationNumber">Matriculation Number</label>
-                                    </div>
-                                    <div className="errormsg my-3">
-                                        {this.state.errorData.errorMatrNum}
-                                    </div>
-                                    <div className="form-label-group">
-                                        <input type="email" id="email" className="form-control text-center" placeholder="Email address" onChange={this.onChange} required />
-                                        <label htmlFor="email">Email address</label>
-                                    </div>
-                                    <div className="errormsg my-3">
-                                        {this.state.errorData.errorEmail}
-                                    </div>
-                                    <div className="form-label-group">
-                                        <input type="password" id="password" className="form-control text-center" placeholder="Password" onChange={this.onChange} required />
-                                        <label htmlFor="password">Password</label>
-                                    </div>
-                                    <div className="form-label-group">
-                                        <input type="password" id="confirmPassword" className="form-control text-center" placeholder="Confirm Password" onChange={this.onChange} required />
-                                        <label htmlFor="confirmPassword">Confirm Password</label>
-                                    </div>
-                                    <div className="errormsg my-3">
-                                        {this.state.errorData.errorPassword}
-                                    </div>
-                                    <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.register}>Register</button>
-                                    <div className="errormsg my-3">
-                                        {this.state.errorData.errorUserExist}
-                                    </div>
-                                    <hr className="my-4" />
-                                </form>
+            <div>
+                <div id="loader">
+                    <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+                <div className="container">
+                    <div className="row">
+                        <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                            <div className="card card-signin my-5">
+                                <div className="card-body">
+                                    <h5 className="card-title text-center">Registration Form</h5>
+                                    <form className="form-signin">
+                                        <div className="form-label-group">
+                                            <input type="text" id="firstName" className="form-control text-center" placeholder="First Name" onChange={this.onChange} required />
+                                            <label htmlFor="firstName">First Name</label>
+                                        </div>
+                                        <div className="errormsg my-3">
+                                            {this.state.errorData.errorFirstName}
+                                        </div>
+                                        <div className="form-label-group">
+                                            <input type="text" id="lastName" className="form-control text-center" placeholder="Last Name" onChange={this.onChange} required />
+                                            <label htmlFor="lastName">Last Name</label>
+                                        </div>
+                                        <div className="errormsg my-3">
+                                            {this.state.errorData.errorLastName}
+                                        </div>
+                                        <div className="form-label-group">
+                                            <input type="number" id="matriculationNumber" className="form-control text-center" placeholder="Matriculation Number" onChange={this.onChange} required />
+                                            <label htmlFor="matriculationNumber">Matriculation Number</label>
+                                        </div>
+                                        <div className="errormsg my-3">
+                                            {this.state.errorData.errorMatrNum}
+                                        </div>
+                                        <div className="form-label-group">
+                                            <input type="email" id="email" className="form-control text-center" placeholder="Email address" onChange={this.onChange} required />
+                                            <label htmlFor="email">Email address</label>
+                                        </div>
+                                        <div className="errormsg my-3">
+                                            {this.state.errorData.errorEmail}
+                                        </div>
+                                        <div className="form-label-group">
+                                            <input type="password" id="password" className="form-control text-center" placeholder="Password" onChange={this.onChange} required />
+                                            <label htmlFor="password">Password</label>
+                                        </div>
+                                        <div className="form-label-group">
+                                            <input type="password" id="confirmPassword" className="form-control text-center" placeholder="Confirm Password" onChange={this.onChange} required />
+                                            <label htmlFor="confirmPassword">Confirm Password</label>
+                                        </div>
+                                        <div className="errormsg my-3">
+                                            {this.state.errorData.errorPassword}
+                                        </div>
+                                        <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.register}>Register</button>
+                                        <div className="errormsg my-3">
+                                            {this.state.errorData.errorUserExist}
+                                        </div>
+                                        <hr className="my-4" />
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>

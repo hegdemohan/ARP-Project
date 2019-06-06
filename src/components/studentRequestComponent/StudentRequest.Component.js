@@ -5,6 +5,7 @@ import axios from 'axios';
 
 class StudentRequest extends Component {
     StudentData;
+    transcriptData;
     selectedSubjects = [];
     constructor(props) {
         super(props)
@@ -28,7 +29,8 @@ class StudentRequest extends Component {
             // selected: false
             // unelectable: ["row1"]
         };
-        this.StudentData = JSON.parse(localStorage.getItem("StudentRequestData"));
+        this.transcriptData = JSON.parse(localStorage.getItem("StudentRequestData"));
+        this.StudentData = JSON.parse(localStorage.getItem("UserDetail"));
         console.log(this.StudentData);
         this.setState({ data: this.StudentData });
         this.setState({ dataSubs: this.StudentData.subjects });
@@ -52,9 +54,10 @@ class StudentRequest extends Component {
                 this.state.dataSubs[i].isSelected = isSelected;
             }
         }
-        this.state.dataSubs.map((subject) => {
+        this.state.dataSubs.map((subject, index) => {
             if (!(subject.isSelected)) {
-                // subject.isSelected = true;
+                console.log(subject);
+                subject.isSelected = true;
                 subject.isRejectedByAdmin = true;
             }
             else {
@@ -66,6 +69,9 @@ class StudentRequest extends Component {
     }
 
     approve() {
+        var loader = document.getElementById("loader");
+        loader.className = "fullScreen";
+        loader.firstChild.style.display = "inline-block";
         var postData =
         {
             "firstName": this.state.data.firstName,
@@ -85,8 +91,8 @@ class StudentRequest extends Component {
             //     }
             // ],
             "transcript": {
-                "fileData": this.state.base64,
-                "fileName": this.state.fileName
+                "fileData": this.transcriptData.transcript.base64,
+                "fileName": this.transcriptData.transcript.fileName
             },
             "isUpdate": true,
             "isLearningAgreementApproved": true
@@ -96,31 +102,36 @@ class StudentRequest extends Component {
                 "https://396603ad.ngrok.io/api/approveLearningAgreement", postData
             )
             .then(res => {
-                console.log("Approved");
-                console.log(res.data);
+                loader.className = "";
+                loader.firstChild.style.display = "none";
                 this.props.history.push("/requests/");
             });
     }
     render() {
 
         return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                        <div className="card card-student my-5">
-                            <div className="card-body">
-                                <h3 className="card-title text-center">Student Details</h3>
-                                <hr className="my-6"></hr>
-                                <div className="row">
-                                    <div className="col-6">First Name:</div><div className="col-6">{this.state.data.firstName}</div>
-                                    <div className="col-6">Last Name:</div><div className="col-6">{this.state.data.lastName}</div>
-                                    <div className="col-6">Matriculation Number:</div><div className="col-6">{this.state.data.matriculationNumber}</div>
-                                    <h2 className="col-12 my-3">Requested Subjects:</h2>
-                                    <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.selectedSubjects}>
-                                        <TableHeaderColumn isKey dataField="module" dataAlign="center">Subject ID</TableHeaderColumn>
-                                        <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
-                                    </BootstrapTable>
-                                    <button className="btn btn-primary my-3 button" onClick={this.approve}>Approve</button>
+            <div>
+                <div id="loader">
+                    <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+                <div className="container">
+                    <div className="row">
+                        <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                            <div className="card card-student my-5">
+                                <div className="card-body">
+                                    <h3 className="card-title text-center">Student Details</h3>
+                                    <hr className="my-6"></hr>
+                                    <div className="row">
+                                        <div className="col-6">First Name:</div><div className="col-6">{this.state.data.firstName}</div>
+                                        <div className="col-6">Last Name:</div><div className="col-6">{this.state.data.lastName}</div>
+                                        <div className="col-6">Matriculation Number:</div><div className="col-6">{this.state.data.matriculationNumber}</div>
+                                        <h2 className="col-12 my-3">Requested Subjects:</h2>
+                                        <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.selectedSubjects}>
+                                            <TableHeaderColumn isKey dataField="module" dataAlign="center">Subject ID</TableHeaderColumn>
+                                            <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
+                                        </BootstrapTable>
+                                        <button className="btn btn-primary my-3 button" onClick={this.approve}>Approve</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
