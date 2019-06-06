@@ -21,7 +21,15 @@ input[readonly] {
   cursor: text !important;
 }
 
-.hidden{
-  visibility:hidden;
+.hidden {
+  visibility: hidden;
   position: fixed;
+}
+
+.reject {
+  color: red;
+}
+
+.approve {
+  color: green;
 }

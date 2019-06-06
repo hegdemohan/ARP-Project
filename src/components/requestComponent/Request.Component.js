@@ -3,21 +3,21 @@ import "./Request.Component.css";
 import axios from "axios";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { Route } from "react-router-dom";
-import Modal from 'react-awesome-modal';
-
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import "react-tabs/style/react-tabs.css";
 
 class RequestComponent extends Component {
   studentSub = {};
   constructor(props) {
     super(props);
     this.state = {
-      studentObj: "",
-      visible: false
+      allStudentObj: "",
+      pendStudentObj: "",
+      apprStudentObj: "",
+      tabIndex: 1
     };
-    this.openModal = this.openModal.bind(this);
-    this.submitModal = this.submitModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
-    this.editSubs = this.editSubs.bind(this);
+
+    this.manageSubs = this.manageSubs.bind(this);
 
   }
 
@@ -26,10 +26,28 @@ class RequestComponent extends Component {
     //Send the document API
     axios
       // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
-      .get("https://d1c21ad1.ngrok.io/api/getStudentRequestData?type=all")
+      .get("https://99a1aa37.ngrok.io/api/getStudentRequestData?type=all")
       .then(res => {
         this.setState({
-          studentObj: [...this.state.studentObj, ...res.data]
+          allStudentObj: [...this.state.allStudentObj, ...res.data]
+        });
+        // console.log(this.state.studentObj)
+      });
+    axios
+      // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
+      .get("https://99a1aa37.ngrok.io/api/getStudentRequestData?type=pending")
+      .then(res => {
+        this.setState({
+          pendStudentObj: [...this.state.pendStudentObj, ...res.data]
+        });
+        // console.log(this.state.studentObj)
+      });
+    axios
+      // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
+      .get("https://99a1aa37.ngrok.io/api/getStudentRequestData?type=approved")
+      .then(res => {
+        this.setState({
+          apprStudentObj: [...this.state.apprStudentObj, ...res.data]
         });
         // console.log(this.state.studentObj)
       });
@@ -52,44 +70,15 @@ class RequestComponent extends Component {
             // go to the detail product page
             history.push("/StudentRequest/")
           }}>
-          >>>
-            </a>
+          <i className="fa fa-angle-double-right"></i>
+        </a>
 
       )}
       />
     )
   }
-  openModal() {
-    this.setState({
-      visible: true
-    });
-  }
 
-  submitModal(e) {
-    e.preventDefault();
-    axios
-      .post(
-        "https://d1c21ad1.ngrok.io/api/Subject/addSubject", {
-          subjectID: 0,
-          subjectMappingID: 0,
-          module: e.target.elements.module.value,
-          subjectName: e.target.elements.subName.value,
-          isSelected: true
-        })
-      .then((response) => {
-        console.log("Success adding");
-        // this.setState({ Subs: resp.data });
-      });
-    this.setState({
-      visible: false
-    });
-  }
-  closeModal() {
-    this.setState({
-      visible: false
-    });
-  }
-  editSubs() {
+  manageSubs() {
     this.props.history.push('/editSubjects/');
   }
 
@@ -101,59 +90,32 @@ class RequestComponent extends Component {
           <div className="card row my-5">
             <div className="card-body">
               <div className="row r1">
-                <button className="btn btn-primary sub" onClick={this.openModal}>Add Subject</button>
-                <button className="btn btn-secondary sub" onClick={this.editSubs}>Edit Subject</button>
+                <button className="btn btn-primary sub" onClick={this.manageSubs}>Manage Subjects</button>
               </div>
-              <Modal visible={this.state.visible} width="650" height="400" effect="fadeInUp" onClickAway={() => this.closeModal()}>
-                <div className="container c1">
-                  <div className="row">
-                    <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                      <h5 className="text-center">Subject Details</h5>
-                      <hr className="my-4" />
-                      <p >Please enter all the fields</p>
-                      {/* <h5 className="card-title text-center">Sign In</h5> */}
-                      <form className="form-signin" onSubmit={this.submitModal}>
-                        <div className="form-label-group">
-                          <input
-                            type="subjectModule"
-                            id="subjectModule"
-                            name="module"
-                            className="form-control text-center"
-                            // placeholder="subjectModule address"
-                            // onChange={this.onChange}
-                            required
-                          />
-                          <label htmlFor="subjectModule">Subject Module</label>
-                        </div>
-                        <div className="form-label-group">
-                          <input
-                            type="subjectName"
-                            id="subjectName"
-                            name="subName"
-                            className="form-control text-center"
-                            // placeholder="Mobile subjectName"
-                            // onChange={this.onChange}
-                            required
-                          />
-                          <label htmlFor="subjectName">Subject Name</label>
-                        </div>
-                        <button
-                          className="btn btn-lg btn-primary btn-block text-uppercase"
-                          type="submit"
-                        >
-                          SUBMIT
-                      </button>
-                      </form>
-                    </div>
+              <Tabs className="allTabs" selectedIndex={this.state.tabIndex} onSelect={tabIndex => this.setState({ tabIndex })}>
+                <TabList>
+                  <Tab >ALL</Tab>
+                  <Tab>PENDING</Tab>
+                  <Tab>APPROVED</Tab>
+                </TabList>
+
+                <TabPanel>
+                  <div className="container req">
+                    <AllComponent data={this.state.allStudentObj} />
                   </div>
-                </div>
-              </Modal>
-              <div className="container req">
+                </TabPanel>
+                <TabPanel>
+                  <div className="container req">
+                    <PendingRequestComponent data={this.state.pendStudentObj} colFormatter={this.colFormatter} />
+                  </div>
+                </TabPanel>
+                <TabPanel>
+                  <div className="container req">
+                    <ApprovedComponent data={this.state.apprStudentObj} />
+                  </div>
+                </TabPanel>
+              </Tabs>
 
-                <h2>Pending Requests:</h2>
-
-                <PendingRequestComponent data={this.state.studentObj} colFormatter={this.colFormatter} />
-              </div>
             </div>
           </div>
         </div>
@@ -169,6 +131,31 @@ function PendingRequestComponent(props) {
         <TableHeaderColumn dataField="firstName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">FirstName</TableHeaderColumn>
         <TableHeaderColumn dataField="lastName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">LastName</TableHeaderColumn>
         <TableHeaderColumn width={'180'} dataField='id' dataFormat={props.colFormatter} dataAlign="center">Link</TableHeaderColumn>
+      </BootstrapTable>
+    </div>
+  );
+}
+function AllComponent(props) {
+  return (
+    <div>
+      <BootstrapTable className="table table-striped" data={props.data}>
+        <TableHeaderColumn isKey dataField="matriculationNumber" dataAlign="center">Matriculation Number</TableHeaderColumn>
+        <TableHeaderColumn dataField="firstName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">FirstName</TableHeaderColumn>
+        <TableHeaderColumn dataField="lastName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">LastName</TableHeaderColumn>
+        {/* <TableHeaderColumn width={'180'} dataField='id' dataFormat={props.colFormatter} dataAlign="center">Link</TableHeaderColumn> */}
+      </BootstrapTable>
+    </div>
+  );
+}
+
+function ApprovedComponent(props) {
+  return (
+    <div>
+      <BootstrapTable className="table table-striped" data={props.data}>
+        <TableHeaderColumn isKey dataField="matriculationNumber" dataAlign="center">Matriculation Number</TableHeaderColumn>
+        <TableHeaderColumn dataField="firstName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">FirstName</TableHeaderColumn>
+        <TableHeaderColumn dataField="lastName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">LastName</TableHeaderColumn>
+        {/* <TableHeaderColumn width={'180'} dataField='id' dataFormat={props.colFormatter} dataAlign="center">Link</TableHeaderColumn> */}
       </BootstrapTable>
     </div>
   );

@@ -24,7 +24,7 @@ class Registration extends Component {
         await axios
             .post(
                 // "http://192.168.0.102:4005/api/register",
-                "https://d1c21ad1.ngrok.io/api/register",
+                "https://99a1aa37.ngrok.io/api/register",
                 {
                     firstName: this.state.firstName,
                     lastName: this.state.lastName,
@@ -41,8 +41,9 @@ class Registration extends Component {
             })
             .catch(error => {
                 if (error.response.status == 409) {
-                    console.log(error.response.status)
-                    this.state.errorData = "Matriculation Number or Email Address already exists";
+                    console.log(error.response.status);
+                    console.log(error.message);
+                    this.setState({ errorData: "Matriculation Number or Email Address already exists" });
                 }
             });
     }
@@ -103,7 +104,9 @@ class Registration extends Component {
                                         <label htmlFor="confirmPassWord">Confirm Password</label>
                                     </div>
                                     <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.register}>Register</button>
-                                    {this.state.errorData}
+                                    <div className="errormsg my-3">
+                                        {this.state.errorData}
+                                    </div>
                                     <hr className="my-4" />
                                 </form>
                             </div>

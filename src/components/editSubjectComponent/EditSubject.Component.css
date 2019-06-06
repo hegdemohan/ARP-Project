@@ -1,4 +1,5 @@
 .link-lay {
+  font-size: 20px;
   margin: 5px;
 }
 .link-lay:hover {
@@ -9,4 +10,20 @@
 }
 .link-lay1:hover {
   color: green;
+}
+.fa-icons-lay {
+  margin: 20px 15px 0 900px !important;
+  font-size: 20px;
+}
+.fa-plus:hover {
+  color: green;
+  text-decoration: underline;
+}
+
+.text-infos {
+  color: grey;
+}
+
+.delBtn {
+  margin-right: 15px;
 }

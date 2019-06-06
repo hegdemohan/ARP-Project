@@ -4,13 +4,20 @@ import './StudentRequest.Component.css';
 import axios from 'axios';
 
 class StudentRequest extends Component {
+    StudentData;
     constructor(props) {
         super(props)
         this.state = {
-            data: ""
-            // selected: []
+            data: "",
+            dataSubs: "",
+            base64: "",
+            fileName: ""
         }
         this.init = this.init.bind(this);
+        this.approve = this.approve.bind(this);
+        this.handleRowSelect = this.handleRowSelect.bind(this);
+
+
     }
     componentDidMount() {
         this.init();
@@ -20,88 +27,75 @@ class StudentRequest extends Component {
         this.selectRowProp = {
             mode: 'checkbox',
             selected: [],
-            // onSelect: this.handleRowSelect
+            onSelect: this.handleRowSelect
             // selected: false
             // unelectable: ["row1"]
         };
-        var StudentData = JSON.parse(localStorage.getItem("UserDetail"));
-        console.log(StudentData);
-        this.setState({ data: StudentData });
-        // console.log(this.state.data.subjects.subjectID);
-
-
-        // console.log(this.state.data);
-        // console.log(this.state.data);
-        StudentData.subjects.map((subject) => {
+        this.StudentData = JSON.parse(localStorage.getItem("UserDetail"));
+        console.log(this.StudentData);
+        this.setState({ data: this.StudentData });
+        this.setState({ dataSubs: this.StudentData.subjects });
+        this.StudentData.subjects.map((subject) => {
             // this.updatedSubjects.push(subject);
             if (subject.isSelected) {
                 this.selectRowProp.selected.push(subject.module);
-                // console.log(this.selectRowProp.selected)
             }
-            // this.setState({ selected: this.selectRowProp.selected })
-
         });
+    }
 
-
-        // this.state.data.subjects.map((subject) => {
-        //     this.subjectsLocal.push(subject);
-        //     // if(subject.isSelected){
-        //     //     this.selectRowProp.selected.push(subject.subjectID);
-        //     // }
-        // });
+    handleRowSelect(row, isSelected, e) {
+        for (let i = 0; i < this.state.dataSubs.length; i++) {
+            if (this.state.dataSubs[i].subjectID === row.subjectID) {
+                this.state.dataSubs[i].isSelected = isSelected;
+            }
+        }
+        this.state.dataSubs.map((subject) => {
+            if (!(subject.isSelected)) {
+                subject.isSelected = true;
+                subject.isRejectedByAdmin = true;
+            }
+            else {
+                subject.isSelected = true;
+                subject.isRejectedByAdmin = false;
+            }
+        });
+        console.log(this.state.dataSubs);
     }
 
     approve() {
-        // this.state.data.map((subject) => {
-        //     if (subject.isSelected) {
-        //       selectedAtLeastOne = true;
-        //     }
-        //   });
-        // var postData=
-        // {
-        //     "firstName": this.state.data.firstName,
-        //         "lastName": this.state.data.lastName,
-        //             "matriculationNumber": this.state.data.matriculationNumber,
-        //                 "studentID": this.state.data.studentID,
-        //     // this.state.data.subjects.map((subject) => {
-        //                     "subjects": [
-        //                         {
+        var postData =
+        {
+            "firstName": this.state.data.firstName,
+            "lastName": this.state.data.lastName,
+            "matriculationNumber": this.state.data.matriculationNumber,
+            "studentID": this.state.data.studentID,
+            "subjects": this.state.dataSubs,
+            // [
+            //     {
 
-        //                             "subjectID": subject.subjectID,
-        //                             "subjectMappingID": subject.subjectMappingID,
-        //                             "subjectName": subject.subjectName,
-        //                             "module": subject.module,
-        //                             "isSelected": true,
-        //                             "isRejectedByAdmin": true
-        //                         }
-        //                     ],
-        //                         "transcript": {
-        //         "fileData": "string",
-        //             "fileName": "string"
-        //     },
-        //     "isUpdate": true,
-        //         "isLearningAgreementApproved": true
-        // // });
-        // }
-        // var data = {
-        //     "firstName": studentData.firstName,
-        //     "lastName": studentData.lastName,
-        //     "matriculationNumber": studentData.matriculationNumber,
-        //     "studentID": studentData.studentID,
-        //     "subjects": this.state.data,
-        //     "transcript": {
-        //         "fileData": this.state.base64,
-        //         "fileName": this.state.fileName
-        //     },
-        //     "isUpdate": false
-        // }
-        // axios
-        //     .post(
-        //         "https://d1c21ad1.ngrok.io/api/approveLearningAgreement", data
-        //     )
-        //     .then(res => {
-        //         console.log(res.data);
-        //     });
+            //         "subjectID": subject.subjectID,
+            //         "subjectMappingID": subject.subjectMappingID,
+            //         "subjectName": subject.subjectName,
+            //         "module": subject.module,
+            //         "isSelected": true,
+            //         "isRejectedByAdmin": true
+            //     }
+            // ],
+            "transcript": {
+                "fileData": this.state.base64,
+                "fileName": this.state.fileName
+            },
+            "isUpdate": true,
+            "isLearningAgreementApproved": true
+        }
+        axios
+            .post(
+                "https://99a1aa37.ngrok.io/api/approveLearningAgreement", postData
+            )
+            .then(res => {
+                console.log("Approved");
+                console.log(res.data);
+            });
     }
     render() {
 
