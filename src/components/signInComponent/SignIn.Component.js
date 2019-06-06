@@ -23,6 +23,10 @@ class SignInComponent extends Component {
   }
   async signIn(e) {
     e.preventDefault();
+    var loader = document.getElementById("loader");
+    loader.className = "fullScreen";
+    loader.firstChild.style.display = "inline-block";
+
     await axios
       .post(
         // "http://192.168.0.102:4005/api/login",
@@ -40,7 +44,8 @@ class SignInComponent extends Component {
               this.studentRequestData
             )
             .then(res => {
-              console.log("Success");
+              loader.className = "";
+              loader.firstChild.style.display = "none";
               this.props.history.push("/requests/");
             });
         }
@@ -52,7 +57,8 @@ class SignInComponent extends Component {
 
             )
             .then(resp => {
-              console.log("Success");
+              loader.className = "";
+              loader.firstChild.style.display = "none";
               localStorage.setItem("StudentData", JSON.stringify(resp.data));
               this.props.history.push("/studentDetails/");
             });
@@ -70,52 +76,57 @@ class SignInComponent extends Component {
 
   render() {
     return (
-      <div className="container">
-        <div className="row">
-          <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-            <div className="card card-signin my-5">
-              <div className="card-body">
-                <h5 className="card-title text-center">Sign In</h5>
-                <form className="form-signin">
-                  <div className="form-label-group">
-                    <input
-                      type="email"
-                      id="email"
-                      className="form-control text-center"
-                      placeholder="Email address"
-                      onChange={this.onChange}
-                      required
-                    />
-                    <label htmlFor="email">Email address</label>
-                  </div>
-                  <div className="form-label-group">
-                    <input
-                      type="password"
-                      id="passWord"
-                      className="form-control text-center"
-                      placeholder="Password"
-                      onChange={this.onChange}
-                      required
-                    />
-                    <label htmlFor="passWord">Password</label>
-                  </div>
-                  <button
-                    className="btn btn-lg btn-primary btn-block text-uppercase"
-                    type="submit"
-                    onClick={this.signIn}
-                  >
-                    Sign in
+      <div>
+        <div id="loader">
+          <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+        <div className="container">
+          <div className="row">
+            <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
+              <div className="card card-signin my-5">
+                <div className="card-body">
+                  <h5 className="card-title text-center">Sign In</h5>
+                  <form className="form-signin">
+                    <div className="form-label-group">
+                      <input
+                        type="email"
+                        id="email"
+                        className="form-control text-center"
+                        placeholder="Email address"
+                        onChange={this.onChange}
+                        required
+                      />
+                      <label htmlFor="email">Email address</label>
+                    </div>
+                    <div className="form-label-group">
+                      <input
+                        type="password"
+                        id="passWord"
+                        className="form-control text-center"
+                        placeholder="Password"
+                        onChange={this.onChange}
+                        required
+                      />
+                      <label htmlFor="passWord">Password</label>
+                    </div>
+                    <button
+                      className="btn btn-lg btn-primary btn-block text-uppercase"
+                      type="submit"
+                      onClick={this.signIn}
+                    >
+                      Sign in
                   </button>
-                  <div className="mt-4">
-                    <a className="anchor_tag">Forgot password?</a>
-                  </div>
-                  <hr className="my-4" />
-                  <div>Haven't registered yet?</div>
-                  <a className="anchor_tag" onClick={this.moveToRegistration}>
-                    Register now
+                    <div className="mt-4">
+                      <a className="anchor_tag">Forgot password?</a>
+                    </div>
+                    <hr className="my-4" />
+                    <div>Haven't registered yet?</div>
+                    <a className="anchor_tag" onClick={this.moveToRegistration}>
+                      Register now
                   </a>
-                  <hr className="my-4" />
-                </form>
+                    <hr className="my-4" />
+                  </form>
+                </div>
               </div>
             </div>
           </div>

@@ -9,8 +9,8 @@ class StudentDetails extends Component {
         super(props)
         this.state = {
             subjectsObject: '',
-            userDetailsObject: {}
-
+            userDetailsObject: {},
+            newUser:false
         }
         this.init = this.init.bind(this);
         this.navigate = this.navigate.bind(this);
@@ -38,15 +38,14 @@ class StudentDetails extends Component {
     init() {
         // this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [] }
         var data = JSON.parse(localStorage.getItem("StudentData"));
-        console.log(data.firstName);
         this.setState({ userDetailsObject: data });
         // this.state.userDetailsObject.firstName = data.firstName;
         // this.state.userDetailsObject.lastName = data.lastName;
         // this.state.userDetailsObject.matriculationNo = data.matriculationNumber;
         if (data.subjects.length == 0) {
-            this.state.userDetailsObject.newUser = true;
+            this.state.newUser = true;
         } else {
-            this.state.userDetailsObject.newUser = false;
+            this.state.newUser = false;
         }
     }
 
@@ -64,18 +63,19 @@ class StudentDetails extends Component {
                                     <div className="col-6">Last Name:</div><div className="col-6">{this.state.userDetailsObject.lastName}</div>
                                     <div className="col-6">Matriculation Number:</div><div className="col-6">{this.state.userDetailsObject.matriculationNumber}</div>
                                 </div>
+                                <span>{!this.state.newUser}</span>
                                 <hr className="my-4"></hr>
                                 <div className="row">
                                     <div className="col-6">
-                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.state.userDetailsObject.newUser} onClick={() => this.navigate('new')}>Add new</button>
+                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.state.newUser} onClick={() => this.navigate('new')}>Add new</button>
                                     </div>
                                     <div className="col-6">
-                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.state.userDetailsObject.newUser} onClick={() => this.navigate('edit')}>Edit</button>
+                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.state.newUser} onClick={() => this.navigate('edit')}>Edit</button>
                                     </div>
                                 </div>
                                 <div className="row my-4">
                                     <div className="col-12">
-                                        <button className="general-button btn btn-lg btn-success btn-block text-uppercase" type="submit" disabled={this.state.userDetailsObject.newUser} onClick={() => this.navigate('statusCheck')}>Check Status</button>
+                                        <button className="general-button btn btn-lg btn-success btn-block text-uppercase" type="submit" disabled={this.state.newUser} onClick={() => this.navigate('statusCheck')}>Check Status</button>
                                     </div>
                                 </div>
                             </div>
