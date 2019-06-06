@@ -9,6 +9,7 @@ import { NONAME } from "dns";
 
 class CheckStatusComponent extends Component {
   newUserDiv;
+  studentData;
   // updatedSubjects = [];
   constructor(props) {
     super(props);
@@ -26,31 +27,41 @@ class CheckStatusComponent extends Component {
 
   init() {
     var selectedSubjects = [];
-    var studentData = JSON.parse(localStorage.getItem("StudentData"));
-      studentData.subjects.map(function(subject){
-        if(subject.isSelected){
-          selectedSubjects.push(subject);
-        }
-      });
-      this.setState({ data: selectedSubjects });
+    this.studentData = JSON.parse(localStorage.getItem("StudentData"));
+    this.studentData.subjects.map(function (subject) {
+      if (subject.isSelected) {
+        selectedSubjects.push(subject);
+      }
+    });
+    this.setState({ data: selectedSubjects });
   }
 
   colFormatter = (cell, row) => {
     this.adminStatus = row;
-    if ((this.adminStatus.isSelected) && (this.adminStatus.isRejectedByAdmin)) {
-      console.log("rejected");
-      return (
-        <div className="reject">
-          REJECTED
+    console.log(this.adminStatus);
+    if (this.studentData.isLearningAgreementApproved) {
+      if ((this.adminStatus.isSelected) && (this.adminStatus.isRejectedByAdmin)) {
+        console.log("rejected");
+        return (
+          <div className="reject">
+            REJECTED
         </div>
-      )
+        )
+      }
+      else if ((this.adminStatus.isSelected) && !(this.adminStatus.isRejectedByAdmin)) {
+        console.log("approved");
+        return (
+          <div className="approve">
+            APPROVED
+        </div>
+        )
+      }
     }
-    else if ((this.adminStatus.isSelected) && !(this.adminStatus.isRejectedByAdmin)) {
-      console.log("approved");
+    else {
       return (
         <div className="approve">
-          APPROVED
-        </div>
+          PENDING
+      </div>
       )
     }
 

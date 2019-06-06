@@ -6,12 +6,12 @@ import axios from 'axios';
 class StudentRequest extends Component {
     StudentData;
     transcriptData;
+    dataSubs;
     selectedSubjects = [];
     constructor(props) {
         super(props)
         this.state = {
             data: "",
-            dataSubs: "",
             base64: "",
             fileName: ""
         }
@@ -33,7 +33,8 @@ class StudentRequest extends Component {
         this.StudentData = JSON.parse(localStorage.getItem("UserDetail"));
         console.log(this.StudentData);
         this.setState({ data: this.StudentData });
-        this.setState({ dataSubs: this.StudentData.subjects });
+        this.dataSubs = this.StudentData.subjects;
+        // this.setState({ dataSubs: this.StudentData.subjects });
         this.init();
     }
 
@@ -49,23 +50,28 @@ class StudentRequest extends Component {
     }
 
     handleRowSelect(row, isSelected, e) {
-        for (let i = 0; i < this.state.dataSubs.length; i++) {
-            if (this.state.dataSubs[i].subjectID === row.subjectID) {
-                this.state.dataSubs[i].isSelected = isSelected;
+        for (let i = 0; i < this.dataSubs.length; i++) {
+            if (this.dataSubs[i].subjectID === row.subjectID) {
+                this.dataSubs[i].isSelected = isSelected;
+                console.log(this.dataSubs[i]);
             }
         }
-        this.state.dataSubs.map((subject, index) => {
-            if (!(subject.isSelected)) {
-                console.log(subject);
-                subject.isSelected = true;
-                subject.isRejectedByAdmin = true;
-            }
-            else {
-                // subject.isSelected = true;
-                subject.isRejectedByAdmin = false;
+        this.dataSubs.map((subject) => {
+            if (subject.subjectID === row.subjectID) {
+                if (!(subject.isSelected)) {
+                    subject.isSelected = true;
+                    subject.isRejectedByAdmin = true;
+                    console.log(subject, "false");
+                }
+                else {
+                    subject.isSelected = true;
+                    subject.isRejectedByAdmin = false;
+                    console.log(subject, "true");
+                }
             }
         });
-        console.log(this.state.dataSubs);
+        console.log(this.dataSubs);
+
     }
 
     approve() {
@@ -78,7 +84,7 @@ class StudentRequest extends Component {
             "lastName": this.state.data.lastName,
             "matriculationNumber": this.state.data.matriculationNumber,
             "studentID": this.state.data.studentID,
-            "subjects": this.state.dataSubs,
+            "subjects": this.dataSubs,
             // [
             //     {
 

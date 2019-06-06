@@ -9,6 +9,7 @@ import createReactClass from "create-react-class"
 class DashboardComponent extends Component {
   afterSelction = {}
   selectRowProp = {}
+  studentDataUrl = "https://396603ad.ngrok.io/api/getStudentData/";
   newUserDiv;
   loader;
   // updatedSubjects = [];
@@ -126,20 +127,36 @@ class DashboardComponent extends Component {
         "matriculationNumber": studentData.matriculationNumber,
         "studentID": studentData.studentID,
         "subjects": this.state.data,
+        "isUpdate": localStorage.getItem("newUser") == "true" ? false : true,
         "transcript": {
           "fileData": this.state.base64,
           "fileName": this.state.fileName
-        },
-        "isUpdate": false
+        }
       }
       axios
         .post(
           "https://396603ad.ngrok.io/api/saveStudentData", data
         )
         .then(res => {
-          this.loader.className = "";
-          this.loader.firstChild.style.display = "none";
-          this.props.history.push('/studentDetails/');
+
+          localStorage.setItem("newUser", "false");
+          axios
+            .get(
+              // "http://192.168.0.102:4005/api/getStudentData/" + res.data.studentID
+              this.studentDataUrl + studentData.studentID
+            )
+            .then(resp => {
+              this.loader.className = "";
+              this.loader.firstChild.style.display = "none";
+              localStorage.setItem("StudentData", JSON.stringify(resp.data));
+              if (resp.data.subjects.length == 0) {
+                localStorage.setItem("newUser", "true");
+              } else {
+                localStorage.setItem("newUser", "false");
+              }
+              this.props.history.push("/studentDetails/");
+            });
+
         });
     } else {
       alert("Select at least one subject!");
