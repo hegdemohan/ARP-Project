@@ -7,6 +7,7 @@ import RequestComponent from "./components/requestComponent/Request.Component";
 import Registration from "./components/registrationComponent/Registration.Component";
 import StudentRequest from "./components/studentRequestComponent/StudentRequest.Component";
 import EditSubject from "./components/editSubjectComponent/EditSubject.Component";
+import CheckStatus from "./components/checkStatusComponent/CheckStatus.Component"
 
 class Router extends Component {
   state = {};
@@ -23,6 +24,7 @@ class Router extends Component {
             <Route path="/requests/" component={RequestComponent} />
             <Route path={"/StudentRequest/"} component={StudentRequest} />
             <Route path={"/editSubjects/"} component={EditSubject} />
+            <Route path={"/checkStatus/"} component={CheckStatus} />
 
           </Switch>
         </BrowserRouter>

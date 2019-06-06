@@ -57,7 +57,6 @@ class DashboardComponent extends Component {
     for (let i = 0; i < this.state.data.length; i++) {
       if (this.state.data[i].subjectID === row.subjectID) {
         if ((row.isSelected) && (row.isRejectedByAdmin)) {
-          console.log(row);
           return '#C0C0C0';
         }
         else {
@@ -89,7 +88,7 @@ class DashboardComponent extends Component {
         }
       });
       studentData.subjects.map((subject) => {
-        if ((subject.isSelected) && (subject.isRejectedByAdmin)) {
+        if ((subject.isSelected)) {
           this.selectRowProp.unselectable.push(subject.module);
         }
       });

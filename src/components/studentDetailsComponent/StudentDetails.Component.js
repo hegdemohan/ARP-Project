@@ -21,7 +21,11 @@ class StudentDetails extends Component {
     }
 
     navigate(buttonClicked) {
-        if (buttonClicked == "new") {
+        if(buttonClicked == "statusCheck"){
+            this.props.history.push("/checkStatus/");
+            return;
+        }
+        else if (buttonClicked == "new") {
             localStorage.setItem("newUser", "true");
             this.props.history.push("/dashboard/");
         } else {
@@ -44,19 +48,6 @@ class StudentDetails extends Component {
         } else {
             this.state.userDetailsObject.newUser = false;
         }
-
-        // axios.get("https://0ab80a65-1441-4447-b497-11020f9f0b0e.mock.pstmn.io/getStudentDetails").then(res => {
-        //     // this.setState({ availableSubjects: res.data});
-        //     this.userDetailsObject.firstName = res.data.firstName;
-        //     this.userDetailsObject.lastName = res.data.lastName;
-        //     this.userDetailsObject.matriculationNo = res.data.matriculationNo;
-        //     this.setState({ subjectsObject: res.data.subjects });
-        //     if (this.state.subjectsObject.length == 0) {
-        //         this.userDetailsObject.newUser = true;
-        //     } else {
-        //         this.userDetailsObject.newUser = false;
-        //     }
-        // });
     }
 
     render() {
@@ -80,6 +71,11 @@ class StudentDetails extends Component {
                                     </div>
                                     <div className="col-6">
                                         <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.state.userDetailsObject.newUser} onClick={() => this.navigate('edit')}>Edit</button>
+                                    </div>
+                                </div>
+                                <div className="row my-4">
+                                    <div className="col-12">
+                                        <button className="general-button btn btn-lg btn-success btn-block text-uppercase" type="submit" disabled={this.state.userDetailsObject.newUser} onClick={() => this.navigate('statusCheck')}>Check Status</button>
                                     </div>
                                 </div>
                             </div>
