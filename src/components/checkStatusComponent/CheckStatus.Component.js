@@ -26,16 +26,13 @@ class CheckStatusComponent extends Component {
 
   init() {
     var selectedSubjects = [];
-    if (localStorage.getItem("newUser") == "false") {
-      var studentData = JSON.parse(localStorage.getItem("StudentData"));
-      console.log(studentData.subjects)
+    var studentData = JSON.parse(localStorage.getItem("StudentData"));
       studentData.subjects.map(function(subject){
         if(subject.isSelected){
           selectedSubjects.push(subject);
         }
       });
       this.setState({ data: selectedSubjects });
-    }
   }
 
   colFormatter = (cell, row) => {

@@ -9,44 +9,125 @@ class Registration extends Component {
             firstName: "",
             lastName: "",
             matriculationNumber: 0,
+            confirmPassword: "",
             loginDetails: {
                 email: "",
                 password: ""
             },
-            errorData: ""
+            errorData: {
+                errorFirstName: "",
+                errorLastName: "",
+                errorMatrNum: "",
+                errorEmail: "",
+                errorPassword: "",
+                errorUserExist: ""
+            },
+            registerClicked: false,
         }
         this.register = this.register.bind(this);
         this.onChange = this.onChange.bind(this);
-
+        this.validData = this.validData.bind(this);
     }
     async register(e) {
         e.preventDefault();
-        await axios
-            .post(
-                // "http://192.168.0.102:4005/api/register",
-                "https://99a1aa37.ngrok.io/api/register",
-                {
-                    firstName: this.state.firstName,
-                    lastName: this.state.lastName,
-                    matriculationNumber: this.state.matriculationNumber,
-                    loginDetails: {
-                        email: this.state.loginDetails.email,
-                        password: this.state.loginDetails.password
+        this.state.registerClicked = true;
+        if (this.validData()) {
+            await axios
+                .post(
+                    // "http://192.168.0.102:4005/api/register",
+                    "https://99a1aa37.ngrok.io/api/register",
+                    {
+                        firstName: this.state.firstName,
+                        lastName: this.state.lastName,
+                        matriculationNumber: this.state.matriculationNumber,
+                        loginDetails: {
+                            email: this.state.loginDetails.email,
+                            password: this.state.loginDetails.password
+                        }
+                    },
+                )
+                .then(res => {
+                    this.props.history.push("/signin/");
+                })
+                .catch(error => {
+                    if (error.response.status == 409) {
+                        this.setState(prevState => ({
+                            errorData: {
+                                ...prevState.errorData,
+                                errorUserExist: "Matriculation Number or Email Address already exists"
+                            }
+                        }))
                     }
-                },
-            )
-            .then(res => {
-                console.log(res.data);
-                this.props.history.push("/signin/");
-            })
-            .catch(error => {
-                if (error.response.status == 409) {
-                    console.log(error.response.status);
-                    console.log(error.message);
-                    this.setState({ errorData: "Matriculation Number or Email Address already exists" });
-                }
-            });
+                });
+        }
     }
+
+    validData() {
+        this.state.errorData = {
+            errorFirstName: "",
+            errorLastName: "",
+            errorMatrNum: "",
+            errorEmail: "",
+            errorPassword: "",
+            errorUserExist: ""
+        }
+        var isValid = true;
+        if (this.state.firstName == "" || this.state.firstName == undefined) {
+            this.setState(prevState => ({
+                errorData: {
+                    ...prevState.errorData,
+                    errorFirstName: "Please enter First Name"
+                }
+            }))
+            isValid = false;
+        }
+        if (this.state.lastName == "" || this.state.lastName == undefined) {
+            this.setState(prevState => ({
+                errorData: {
+                    ...prevState.errorData,
+                    errorLastName: "Please enter Last Name"
+                }
+            }))
+            isValid = false;
+        }
+        if (this.state.matriculationNumber == "" || this.state.matriculationNumber == undefined) {
+            this.setState(prevState => ({
+                errorData: {
+                    ...prevState.errorData,
+                    errorMatrNum: "Please enter Matriculation Number"
+                }
+            }))
+            isValid = false;
+        }
+        if (this.state.loginDetails.email == "" || this.state.loginDetails.email == undefined || !/\S+@\S+\.\S+/.test(this.state.loginDetails.email)) {
+            this.setState(prevState => ({
+                errorData: {
+                    ...prevState.errorData,
+                    errorEmail: "Please enter a valid Email Address"
+                }
+            }))
+            isValid = false;
+        }
+        if (this.state.loginDetails.password == "" || this.state.loginDetails.password == undefined) {
+            this.setState(prevState => ({
+                errorData: {
+                    ...prevState.errorData,
+                    errorPassword: "Password can not be empty"
+                }
+            }))
+            isValid = false;
+        } else if (this.state.loginDetails.password !== this.state.confirmPassword) {
+            this.setState(prevState => ({
+                errorData: {
+                    ...prevState.errorData,
+                    errorPassword: "Passwords did not match"
+                }
+            }))
+            isValid = false;
+        }
+        return isValid;
+    }
+
     onChange(e) {
         const that = e.target.value;
         if (e.target.id == "email") {
@@ -55,7 +136,11 @@ class Registration extends Component {
                     ...prevState.loginDetails,
                     email: that
                 }
-            }))
+            }),() => {
+                if (this.state.registerClicked) {
+                    this.validData();
+                }
+            })
         }
         else if (e.target.id == "password") {
             this.setState(prevState => ({
@@ -63,10 +148,18 @@ class Registration extends Component {
                     ...prevState.loginDetails,
                     password: that
                 }
-            }))
+            }),() => {
+                if (this.state.registerClicked) {
+                    this.validData();
+                }
+            })
         }
         else {
-            this.setState({ [e.target.id]: e.target.value });
+            this.setState({ [e.target.id]: e.target.value }, () => {
+                if (this.state.registerClicked) {
+                    this.validData();
+                }
+            });
         }
 
     }
@@ -83,29 +176,44 @@ class Registration extends Component {
                                         <input type="text" id="firstName" className="form-control text-center" placeholder="First Name" onChange={this.onChange} required />
                                         <label htmlFor="firstName">First Name</label>
                                     </div>
+                                    <div className="errormsg my-3">
+                                        {this.state.errorData.errorFirstName}
+                                    </div>
                                     <div className="form-label-group">
                                         <input type="text" id="lastName" className="form-control text-center" placeholder="Last Name" onChange={this.onChange} required />
                                         <label htmlFor="lastName">Last Name</label>
+                                    </div>
+                                    <div className="errormsg my-3">
+                                        {this.state.errorData.errorLastName}
                                     </div>
                                     <div className="form-label-group">
                                         <input type="number" id="matriculationNumber" className="form-control text-center" placeholder="Matriculation Number" onChange={this.onChange} required />
                                         <label htmlFor="matriculationNumber">Matriculation Number</label>
                                     </div>
+                                    <div className="errormsg my-3">
+                                        {this.state.errorData.errorMatrNum}
+                                    </div>
                                     <div className="form-label-group">
                                         <input type="email" id="email" className="form-control text-center" placeholder="Email address" onChange={this.onChange} required />
                                         <label htmlFor="email">Email address</label>
+                                    </div>
+                                    <div className="errormsg my-3">
+                                        {this.state.errorData.errorEmail}
                                     </div>
                                     <div className="form-label-group">
                                         <input type="password" id="password" className="form-control text-center" placeholder="Password" onChange={this.onChange} required />
                                         <label htmlFor="password">Password</label>
                                     </div>
                                     <div className="form-label-group">
-                                        <input type="password" id="confirmPassWord" className="form-control text-center" placeholder="Confirm Password" required />
-                                        <label htmlFor="confirmPassWord">Confirm Password</label>
+                                        <input type="password" id="confirmPassword" className="form-control text-center" placeholder="Confirm Password" onChange={this.onChange} required />
+                                        <label htmlFor="confirmPassword">Confirm Password</label>
+                                    </div>
+                                    <div className="errormsg my-3">
+                                        {this.state.errorData.errorPassword}
                                     </div>
                                     <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.register}>Register</button>
                                     <div className="errormsg my-3">
-                                        {this.state.errorData}
+                                        {this.state.errorData.errorUserExist}
                                     </div>
                                     <hr className="my-4" />
                                 </form>

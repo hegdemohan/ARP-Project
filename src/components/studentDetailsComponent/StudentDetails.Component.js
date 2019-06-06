@@ -38,7 +38,6 @@ class StudentDetails extends Component {
     init() {
         // this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [] }
         var data = JSON.parse(localStorage.getItem("StudentData"));
-        console.log(data.firstName);
         this.setState({ subjectsObject: this.subjects });
         this.state.userDetailsObject.firstName = data.firstName;
         this.state.userDetailsObject.lastName = data.lastName;
