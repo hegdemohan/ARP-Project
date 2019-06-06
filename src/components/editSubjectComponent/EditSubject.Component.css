@@ -5,12 +5,6 @@
 .link-lay:hover {
   color: red;
 }
-.link-lay1 {
-  margin: 5px;
-}
-.link-lay1:hover {
-  color: green;
-}
 .fa-icons-lay {
   margin: 20px 15px 0 900px !important;
   font-size: 20px;
@@ -23,7 +17,9 @@
 .text-infos {
   color: grey;
 }
-
+.link-lay {
+  font-size: 25px !important;
+}
 .delBtn {
   margin-right: 15px;
 }
