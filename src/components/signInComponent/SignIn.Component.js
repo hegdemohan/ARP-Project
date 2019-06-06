@@ -60,6 +60,11 @@ class SignInComponent extends Component {
               loader.className = "";
               loader.firstChild.style.display = "none";
               localStorage.setItem("StudentData", JSON.stringify(resp.data));
+              if (resp.data.subjects.length == 0) {
+                localStorage.setItem("newUser", "true");
+            } else {
+              localStorage.setItem("newUser", "false");
+            }
               this.props.history.push("/studentDetails/");
             });
         }

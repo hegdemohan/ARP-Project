@@ -27,10 +27,8 @@ class StudentDetails extends Component {
             return;
         }
         else if (buttonClicked == "new") {
-            localStorage.setItem("newUser", "true");
             this.props.history.push("/dashboard/");
         } else {
-            localStorage.setItem("newUser", "false");
             this.props.history.push("/dashboard/");
         }
 
@@ -39,11 +37,12 @@ class StudentDetails extends Component {
     init() {
         // this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [] }
         var data = JSON.parse(localStorage.getItem("StudentData"));
+        var newUser = localStorage.getItem("newUser");
         this.setState({ userDetailsObject: data });
         // this.state.userDetailsObject.firstName = data.firstName;
         // this.state.userDetailsObject.lastName = data.lastName;
         // this.state.userDetailsObject.matriculationNo = data.matriculationNumber;
-        if (data.subjects.length == 0) {
+        if (newUser == "true") {
             this.state.newUser = true;
         } else {
             this.state.newUser = false;
