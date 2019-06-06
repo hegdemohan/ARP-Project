@@ -21,7 +21,7 @@ class StudentDetails extends Component {
     }
 
     navigate(buttonClicked) {
-        if(buttonClicked == "statusCheck"){
+        if (buttonClicked == "statusCheck") {
             this.props.history.push("/checkStatus/");
             return;
         }
@@ -39,10 +39,10 @@ class StudentDetails extends Component {
         // this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [] }
         var data = JSON.parse(localStorage.getItem("StudentData"));
         console.log(data.firstName);
-        this.setState({ subjectsObject: this.subjects });
-        this.state.userDetailsObject.firstName = data.firstName;
-        this.state.userDetailsObject.lastName = data.lastName;
-        this.state.userDetailsObject.matriculationNo = data.matriculationNumber;
+        this.setState({ userDetailsObject: data });
+        // this.state.userDetailsObject.firstName = data.firstName;
+        // this.state.userDetailsObject.lastName = data.lastName;
+        // this.state.userDetailsObject.matriculationNo = data.matriculationNumber;
         if (data.subjects.length == 0) {
             this.state.userDetailsObject.newUser = true;
         } else {
@@ -62,7 +62,7 @@ class StudentDetails extends Component {
                                 <div className="row">
                                     <div className="col-6">First Name:</div><div className="col-6">{this.state.userDetailsObject.firstName}</div>
                                     <div className="col-6">Last Name:</div><div className="col-6">{this.state.userDetailsObject.lastName}</div>
-                                    <div className="col-6">Matriculation Number:</div><div className="col-6">{this.state.userDetailsObject.matriculationNo}</div>
+                                    <div className="col-6">Matriculation Number:</div><div className="col-6">{this.state.userDetailsObject.matriculationNumber}</div>
                                 </div>
                                 <hr className="my-4"></hr>
                                 <div className="row">

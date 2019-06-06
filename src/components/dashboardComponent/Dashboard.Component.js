@@ -31,7 +31,6 @@ class DashboardComponent extends Component {
     this.renderTable = this.renderTable.bind(this);
     this.getSubjects = this.getSubjects.bind(this);
     this.pdfDownload = this.pdfDownload.bind(this);
-    this.bgColorRows = this.bgColorRows.bind(this);
 
   }
 
@@ -53,19 +52,19 @@ class DashboardComponent extends Component {
     }
   }
 
-  bgColorRows(row, isSelect) {
-    for (let i = 0; i < this.state.data.length; i++) {
-      if (this.state.data[i].subjectID === row.subjectID) {
-        if ((row.isSelected) && (row.isRejectedByAdmin)) {
-          return '#C0C0C0';
-        }
-        else {
-          return null;
-        }
-        // this.state.data[i].isSelected = isSelected;
-      }
-    }
-  }
+  // bgColorRows(row, isSelect) {
+  //   for (let i = 0; i < this.state.data.length; i++) {
+  //     if (this.state.data[i].subjectID === row.subjectID) {
+  //       if ((row.isSelected) && (row.isRejectedByAdmin)) {
+  //         return '#C0C0C0';
+  //       }
+  //       else {
+  //         return null;
+  //       }
+  //       // this.state.data[i].isSelected = isSelected;
+  //     }
+  //   }
+  // }
 
   init() {
     this.selectRowProp = {
@@ -73,8 +72,8 @@ class DashboardComponent extends Component {
       selected: [],
       onSelect: this.editSubjects,
       onSelectAll: this.onSelectAllRows,
-      unselectable: [],
-      bgColor: this.bgColorRows
+      unselectable: []
+      // bgColor: this.bgColorRows
     };
 
     if (localStorage.getItem("newUser") == "false") {
@@ -143,27 +142,27 @@ class DashboardComponent extends Component {
     }
   }
 
-  colFormatter = (cell, row) => {
-    this.adminStatus = row;
-    console.log(this.adminStatus);
-    if ((this.adminStatus.isSelected) && (this.adminStatus.isRejectedByAdmin)) {
-      console.log("rejected");
-      return (
-        <div className="reject">
-          REJECTED
-        </div>
-      )
-    }
-    else if ((this.adminStatus.isSelected) && !(this.adminStatus.isRejectedByAdmin)) {
-      console.log("approved");
-      return (
-        <div className="approve">
-          APPROVED
-        </div>
-      )
-    }
+  // colFormatter = (cell, row) => {
+  //   this.adminStatus = row;
+  //   console.log(this.adminStatus);
+  //   if ((this.adminStatus.isSelected) && (this.adminStatus.isRejectedByAdmin)) {
+  //     console.log("rejected");
+  //     return (
+  //       <div className="reject">
+  //         REJECTED
+  //       </div>
+  //     )
+  //   }
+  //   else if ((this.adminStatus.isSelected) && !(this.adminStatus.isRejectedByAdmin)) {
+  //     console.log("approved");
+  //     return (
+  //       <div className="approve">
+  //         APPROVED
+  //       </div>
+  //     )
+  //   }
 
-  }
+  // }
 
   renderTable(data) {
     var Table = createReactClass({
@@ -248,7 +247,7 @@ class DashboardComponent extends Component {
                   <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.state.data}>
                     <TableHeaderColumn isKey dataField="module" dataAlign="center">Subject ID</TableHeaderColumn>
                     <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
-                    <TableHeaderColumn dataField="status" dataFormat={this.colFormatter} dataAlign="center">Admin Status</TableHeaderColumn>
+                    {/* <TableHeaderColumn dataField="status" dataFormat={this.colFormatter} dataAlign="center">Admin Status</TableHeaderColumn> */}
                   </BootstrapTable>
                   <hr className="my-4" />
                   <div className="row">

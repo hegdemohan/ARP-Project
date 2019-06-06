@@ -149,7 +149,7 @@ class EditSubject extends Component {
                             this.deleteSubs = row;
 
                         }}>
-                        DELETE
+                        <i className="fa fa-trash-o"></i>
                     </a>
                 </ div>
 
