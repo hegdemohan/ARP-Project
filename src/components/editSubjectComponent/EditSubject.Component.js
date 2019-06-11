@@ -30,20 +30,24 @@ class EditSubject extends Component {
     }
 
     componentDidMount() {
-        var loader = document.getElementById("loader");
-        loader.className = "fullScreen";
-        loader.firstChild.style.display = "inline-block";
-        axios
-            .get(
-                "https://dee35bf9.ngrok.io/api/Subject/getSubjects"
+        if (sessionStorage.getItem("userLoggedin")) {
+            var loader = document.getElementById("loader");
+            loader.className = "fullScreen";
+            loader.firstChild.style.display = "inline-block";
+            axios
+                .get(
+                    "https://dee35bf9.ngrok.io/api/Subject/getSubjects"
 
-            )
-            .then(resp => {
-                loader.className = "";
-                loader.firstChild.style.display = "none";
-                // console.log("Success");
-                this.setState({ Subs: resp.data });
-            });
+                )
+                .then(resp => {
+                    loader.className = "";
+                    loader.firstChild.style.display = "none";
+                    // console.log("Success");
+                    this.setState({ Subs: resp.data });
+                });
+        } else {
+            this.props.history.push("/signin/");
+        }
 
     }
 

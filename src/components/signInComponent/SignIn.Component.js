@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./SignIn.Component.css";
 import axios from "axios";
+import HeaderComponent from "../headerComponent/Header.Component";
 
 
 class SignInComponent extends Component {
@@ -22,6 +23,15 @@ class SignInComponent extends Component {
     this.onChange = this.onChange.bind(this);
     this.moveToRegistration = this.moveToRegistration.bind(this);
   }
+
+  componentDidMount() {
+    if (sessionStorage.getItem("userLoggedin") && !sessionStorage.getItem("isAdmin")) {
+      this.props.history.push("/studentDetails/");
+    } else if (sessionStorage.getItem("userLoggedin") && sessionStorage.getItem("isAdmin")) {
+      this.props.history.push("/requests/");
+    }
+  }
+
   async signIn(e) {
     e.preventDefault();
     var loader = document.getElementById("loader");
@@ -38,8 +48,8 @@ class SignInComponent extends Component {
         },
       )
       .then(res => {
-        console.log(res);
         if (res.statusText != "No Content" && (res.data != undefined || res.data != "") && res.data.isAdmin) {
+          sessionStorage.setItem("isAdmin", res.data.isAdmin);
           axios
             .get(
               // "http://192.168.0.102:4005/api/getStudentRequestData?type=all"
@@ -48,12 +58,15 @@ class SignInComponent extends Component {
             .then(res => {
               loader.className = "";
               loader.firstChild.style.display = "none";
-              this.props.history.push("/requests/");
+              sessionStorage.setItem("userLoggedin", true);
+              sessionStorage.setItem("userData", JSON.stringify(res.data));
+              // var header = new HeaderComponent;
+              // header.render();
+              window.location.href = "/requests/";
               // this.props.navigation.state.params.refresh();
             }).catch(error => {
               loader.className = "";
               loader.firstChild.style.display = "none";
-              console.log(error.response);
             });
         }
         else if (res.statusText != "No Content" && (res.data != undefined || res.data != "")) {
@@ -66,31 +79,28 @@ class SignInComponent extends Component {
             .then(resp => {
               loader.className = "";
               loader.firstChild.style.display = "none";
-              localStorage.setItem("StudentData", JSON.stringify(resp.data));
+              sessionStorage.setItem("userData", JSON.stringify(resp.data));
               if (resp.data.subjects.length === 0) {
-                console.log("newuser");
-                localStorage.setItem("newUser", "true");
+                sessionStorage.setItem("newUser", "true");
               }
               else {
-                localStorage.setItem("newUser", "false");
+                sessionStorage.setItem("newUser", "false");
               }
-              this.props.history.push("/studentDetails/");
+              sessionStorage.setItem("userLoggedin", true);
+              var header = new HeaderComponent;
+              header.render();
+              window.location.href = "/studentDetails/";
               // this.props.navigation.state.params.refresh();
-
             });
         }
         else {
           loader.className = "";
           loader.firstChild.style.display = "none";
           this.setState({ errormsg: "Invalid Credentials" });
-          // this.state.errormsg = "Invalid Credentials";
-          console.log(this.state.errormsg);
-          console.log("no login");
         }
       }).catch(error => {
         loader.className = "";
         loader.firstChild.style.display = "none";
-        console.log(error.response);
       });
   }
 
@@ -148,9 +158,9 @@ class SignInComponent extends Component {
                     <div className="errormsgs">
                       {this.state.errormsg}
                     </div>
-                    <div className="mt-4">
+                    {/* <div className="mt-4">
                       <a className="anchor_tag">Forgot password?</a>
-                    </div>
+                    </div> */}
                     <hr className="my-4" />
                     <div>Haven't registered yet?</div>
                     <a className="anchor_tag" onClick={this.moveToRegistration}>

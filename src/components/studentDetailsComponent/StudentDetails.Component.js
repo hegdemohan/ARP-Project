@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './StudentDetails.Component.css';
 import axios from 'axios'
+import HeaderComponent from '../headerComponent/Header.Component';
 
 class StudentDetails extends Component {
     temp;
@@ -18,7 +19,11 @@ class StudentDetails extends Component {
     }
 
     componentDidMount() {
-        this.init();
+        if (sessionStorage.getItem("userLoggedin")) {
+            this.init();
+        } else {
+            this.props.history.push("/signin/");
+        }
     }
 
     navigate(buttonClicked) {
@@ -36,8 +41,8 @@ class StudentDetails extends Component {
 
     init() {
         // this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [] }
-        var data = JSON.parse(localStorage.getItem("StudentData"));
-        var newUser = localStorage.getItem("newUser");
+        var data = JSON.parse(sessionStorage.getItem("userData"));
+        var newUser = sessionStorage.getItem("newUser");
         // console.log(newUser);
         this.setState({ userDetailsObject: data });
         // this.state.userDetailsObject.firstName = data.firstName;
@@ -51,7 +56,8 @@ class StudentDetails extends Component {
     }
 
     render() {
-        return (
+        return (<React.Fragment>
+            {/* <HeaderComponent /> */}
             <div className="container">
                 <div className="row">
                     <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
@@ -84,6 +90,7 @@ class StudentDetails extends Component {
                     </div>
                 </div>
             </div>
+        </React.Fragment>
         );
     }
 }

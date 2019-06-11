@@ -22,35 +22,39 @@ class RequestComponent extends Component {
   }
 
   componentDidMount() {
-    // this.setState({availableSubjects : '[subjects:{"abhs","askjdhasjkdhk","askjdhdkashdasudiad"}]'});
-    //Send the document API
-    axios
-      // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
-      .get("https://dee35bf9.ngrok.io/api/getStudentRequestData?type=all")
-      .then(res => {
-        this.setState({
-          allStudentObj: [...this.state.allStudentObj, ...res.data]
+    if (sessionStorage.getItem("userLoggedin")) {
+      // this.setState({availableSubjects : '[subjects:{"abhs","askjdhasjkdhk","askjdhdkashdasudiad"}]'});
+      //Send the document API
+      axios
+        // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
+        .get("https://dee35bf9.ngrok.io/api/getStudentRequestData?type=all")
+        .then(res => {
+          this.setState({
+            allStudentObj: [...this.state.allStudentObj, ...res.data]
+          });
+          // console.log(this.state.studentObj)
         });
-        // console.log(this.state.studentObj)
-      });
-    axios
-      // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
-      .get("https://dee35bf9.ngrok.io/api/getStudentRequestData?type=pending")
-      .then(res => {
-        this.setState({
-          pendStudentObj: [...this.state.pendStudentObj, ...res.data]
+      axios
+        // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
+        .get("https://dee35bf9.ngrok.io/api/getStudentRequestData?type=pending")
+        .then(res => {
+          this.setState({
+            pendStudentObj: [...this.state.pendStudentObj, ...res.data]
+          });
+          // console.log(this.state.studentObj)
         });
-        // console.log(this.state.studentObj)
-      });
-    axios
-      // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
-      .get("https://dee35bf9.ngrok.io/api/getStudentRequestData?type=approved")
-      .then(res => {
-        this.setState({
-          apprStudentObj: [...this.state.apprStudentObj, ...res.data]
+      axios
+        // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
+        .get("https://dee35bf9.ngrok.io/api/getStudentRequestData?type=approved")
+        .then(res => {
+          this.setState({
+            apprStudentObj: [...this.state.apprStudentObj, ...res.data]
+          });
+          // console.log(this.state.studentObj)
         });
-        // console.log(this.state.studentObj)
-      });
+    } else {
+      this.props.history.push("/signin/");
+    }
   }
 
   colFormatter = (cell, row) => {
@@ -70,7 +74,7 @@ class RequestComponent extends Component {
             // this.setState({ studentSub: row });
             this.studentSub = row;
             console.log(this.studentSub);
-            localStorage.setItem("UserDetail", JSON.stringify(row));
+            sessionStorage.setItem("UserDetail", JSON.stringify(row));
             // go to the detail product page
             axios
               .get(
@@ -81,7 +85,7 @@ class RequestComponent extends Component {
                 loader.className = "";
                 loader.firstChild.style.display = "none";
                 console.log("Success request");
-                localStorage.setItem("StudentRequestData", JSON.stringify(resp.data));
+                sessionStorage.setItem("StudentRequestData", JSON.stringify(resp.data));
                 history.push("/StudentRequest/")
 
               });

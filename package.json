@@ -9,6 +9,7 @@
     "bootstrap": "^4.3.1",
     "classnames": "^2.2.6",
     "create-react-class": "^15.6.3",
+    "fs": "0.0.1-security",
     "http-post": "^0.1.1",
     "jquery": "^3.4.1",
     "jspdf": "^1.5.3",
