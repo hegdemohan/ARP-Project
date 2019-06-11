@@ -4,9 +4,9 @@ import axios from "axios";
 
 
 class SignInComponent extends Component {
-  login = "https://58d3d4b0.ngrok.io/api/Login"
-  studentRequestData = "https://58d3d4b0.ngrok.io/api/getStudentRequestData?type=all"
-  studentData = "https://58d3d4b0.ngrok.io/api/getStudentData/"
+  login = "https://dee35bf9.ngrok.io/api/Login"
+  studentRequestData = "https://dee35bf9.ngrok.io/api/getStudentRequestData?type=all"
+  studentData = "https://dee35bf9.ngrok.io/api/getStudentData/"
   signInObject = {};
   constructor(props) {
     super(props);

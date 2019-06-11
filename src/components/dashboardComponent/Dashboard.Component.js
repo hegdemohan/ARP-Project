@@ -9,7 +9,7 @@ import createReactClass from "create-react-class"
 class DashboardComponent extends Component {
   afterSelction = {}
   selectRowProp = {}
-  studentDataUrl = "https://58d3d4b0.ngrok.io/api/getStudentData/";
+  studentDataUrl = "https://dee35bf9.ngrok.io/api/getStudentData/";
   newUserDiv;
   loader;
   // updatedSubjects = [];
@@ -21,7 +21,8 @@ class DashboardComponent extends Component {
       items: "",
       data: "",
       apikey: "88731e0e5888957",
-      base64: ""
+      base64: "",
+      JsonData: []
     };
     this.init = this.init.bind(this);
     this.onFileChange = this.onFileChange.bind(this);
@@ -130,12 +131,13 @@ class DashboardComponent extends Component {
         "isUpdate": localStorage.getItem("newUser") == "true" ? false : true,
         "transcript": {
           "fileData": this.state.base64,
-          "fileName": this.state.fileName
+          "fileName": this.state.fileName,
+          "ocrJson": this.state.JsonData
         }
       }
       axios
         .post(
-          "https://58d3d4b0.ngrok.io/api/saveStudentData", data
+          "https://dee35bf9.ngrok.io/api/saveStudentData", data
         )
         .then(res => {
 
@@ -207,6 +209,8 @@ class DashboardComponent extends Component {
       // console.log(this.state.base64);
       var formData = new FormData();
       formData.set('base64Image', this.state.base64)
+      console.log(this.state.base64);
+      localStorage.setItem("base64", this.state.base64);
       axios
         .post(
           "https://api.ocr.space/parse/image", formData, { headers: { "apikey": this.state.apikey, "Content-Type": 'form-data' } }
@@ -215,15 +219,19 @@ class DashboardComponent extends Component {
           console.log(res.data);
           axios
             .post(
-              "http://16a3c8f4.ngrok.io/api/v1/extractDataFromOcr", res.data
+              "http://b758b130.ngrok.io/api/v1/extractDataFromOcr", res.data
             )
             .then(resp => {
+              var temp = [];
+              for (var i = 0; i < resp.data.result.length; i++) {
+                temp.push({ "subjectName": resp.data.result[i] });
+              }
+              this.setState({ JsonData: JSON.stringify(temp) });
+              console.log(this.state.JsonData);
+              this.getSubjects();
               console.log(resp.data, "base64");
-              this.loader.className = "";
-              this.loader.firstChild.style.display = "none";
             })
         })
-      this.getSubjects();
     }
     else {
       console.log("no upload");
@@ -256,11 +264,9 @@ class DashboardComponent extends Component {
   }
 
   getSubjects() {
-    this.loader.className = "fullScreen";
-    this.loader.firstChild.style.display = "inline-block";
     axios
       .get(
-        "https://58d3d4b0.ngrok.io/api/Subject/getSubjects"
+        "https://dee35bf9.ngrok.io/api/Subject/getSubjects"
         // this.studentRequestData
       )
       .then(res => {

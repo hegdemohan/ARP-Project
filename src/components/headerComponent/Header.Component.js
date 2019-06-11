@@ -24,7 +24,7 @@ class HeaderComponent extends Component {
                     <ul className="navbar-nav mr-auto">
                         {window.location.href.includes('/signin/') ? null :
                             <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{data.firstName}</a>
+                                {/* <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{data.firstName}</a> */}
                                 <div className="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a className="dropdown-item" href="#" onClick={this.logOut}>Sign out</a>
                                 </div>
