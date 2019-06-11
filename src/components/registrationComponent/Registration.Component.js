@@ -37,8 +37,7 @@ class Registration extends Component {
             loader.firstChild.style.display = "inline-block";
             await axios
                 .post(
-                    // "http://192.168.0.102:4005/api/register",
-                    "https://dee35bf9.ngrok.io/api/register",
+                    "https://4c3b3834.ngrok.io/api/register",
                     {
                         firstName: this.state.firstName,
                         lastName: this.state.lastName,

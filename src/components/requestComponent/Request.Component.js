@@ -23,34 +23,26 @@ class RequestComponent extends Component {
 
   componentDidMount() {
     if (sessionStorage.getItem("userLoggedin")) {
-      // this.setState({availableSubjects : '[subjects:{"abhs","askjdhasjkdhk","askjdhdkashdasudiad"}]'});
-      //Send the document API
       axios
-        // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
-        .get("https://dee35bf9.ngrok.io/api/getStudentRequestData?type=all")
+        .get("https://4c3b3834.ngrok.io/api/getStudentRequestData?type=all")
         .then(res => {
           this.setState({
             allStudentObj: [...this.state.allStudentObj, ...res.data]
           });
-          // console.log(this.state.studentObj)
         });
       axios
-        // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
-        .get("https://dee35bf9.ngrok.io/api/getStudentRequestData?type=pending")
+        .get("https://4c3b3834.ngrok.io/api/getStudentRequestData?type=pending")
         .then(res => {
           this.setState({
             pendStudentObj: [...this.state.pendStudentObj, ...res.data]
           });
-          // console.log(this.state.studentObj)
         });
       axios
-        // .get("https://ddcc4a11-1496-4530-832a-8bd1f818ad9d.mock.pstmn.io/getData")
-        .get("https://dee35bf9.ngrok.io/api/getStudentRequestData?type=approved")
+        .get("https://4c3b3834.ngrok.io/api/getStudentRequestData?type=approved")
         .then(res => {
           this.setState({
             apprStudentObj: [...this.state.apprStudentObj, ...res.data]
           });
-          // console.log(this.state.studentObj)
         });
     } else {
       this.props.history.push("/signin/");
@@ -58,9 +50,6 @@ class RequestComponent extends Component {
   }
 
   colFormatter = (cell, row) => {
-
-    // const href = row.id;
-    // console.log(row);
     return (
       <Route render={({ history }) => (
         <a href="#" style={{ cursor: 'pointer' }}
@@ -68,17 +57,13 @@ class RequestComponent extends Component {
             var loader = document.getElementById("loader");
             loader.className = "fullScreen";
             loader.firstChild.style.display = "inline-block";
-            // stop default behavior a href
             e.preventDefault();
-            // set state selected product id
-            // this.setState({ studentSub: row });
             this.studentSub = row;
             console.log(this.studentSub);
             sessionStorage.setItem("UserDetail", JSON.stringify(row));
-            // go to the detail product page
             axios
               .get(
-                "https://dee35bf9.ngrok.io/api/getStudentData/" + row.studentID
+                "https://4c3b3834.ngrok.io/api/getStudentData/" + row.studentID
 
               )
               .then(resp => {

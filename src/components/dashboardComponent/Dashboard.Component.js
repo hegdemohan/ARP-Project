@@ -9,7 +9,7 @@ import createReactClass from "create-react-class"
 class DashboardComponent extends Component {
   afterSelction = {}
   selectRowProp = {}
-  studentDataUrl = "https://dee35bf9.ngrok.io/api/getStudentData/";
+  studentDataUrl = "https://4c3b3834.ngrok.io/api/getStudentData/";
   newUserDiv;
   loader;
   // updatedSubjects = [];
@@ -60,19 +60,6 @@ class DashboardComponent extends Component {
     }
   }
 
-  // bgColorRows(row, isSelect) {
-  //   for (let i = 0; i < this.state.data.length; i++) {
-  //     if (this.state.data[i].subjectID === row.subjectID) {
-  //       if ((row.isSelected) && (row.isRejectedByAdmin)) {
-  //         return '#C0C0C0';
-  //       }
-  //       else {
-  //         return null;
-  //       }
-  //       // this.state.data[i].isSelected = isSelected;
-  //     }
-  //   }
-  // }
 
   init() {
     this.selectRowProp = {
@@ -81,7 +68,6 @@ class DashboardComponent extends Component {
       onSelect: this.editSubjects,
       onSelectAll: this.onSelectAllRows,
       unselectable: []
-      // bgColor: this.bgColorRows
     };
     this.loader = document.getElementById("loader");
     if (sessionStorage.getItem("newUser") == "false") {
@@ -90,7 +76,6 @@ class DashboardComponent extends Component {
       this.setState({ data: studentData.subjects });
 
       studentData.subjects.map((subject) => {
-        // this.updatedSubjects.push(subject);
         if (subject.isSelected) {
           this.selectRowProp.selected.push(subject.module);
         }
@@ -110,10 +95,8 @@ class DashboardComponent extends Component {
     if (selectedFile) {
       if (selectedFile.size < 1000000) {
         const that = this;
-        // var base64;
         fileReader.onload = function (fileLoadedEvent) {
           that.setState({ base64: fileLoadedEvent.target.result })
-          // Print data in console
           console.log(that.state.base64);
         };
         fileReader.readAsDataURL(selectedFile);
@@ -151,14 +134,13 @@ class DashboardComponent extends Component {
       }
       axios
         .post(
-          "https://dee35bf9.ngrok.io/api/saveStudentData", data
+          "https://4c3b3834.ngrok.io/api/saveStudentData", data
         )
         .then(res => {
 
           sessionStorage.setItem("newUser", "false");
           axios
             .get(
-              // "http://192.168.0.102:4005/api/getStudentData/" + res.data.studentID
               this.studentDataUrl + studentData.studentID
             )
             .then(resp => {
@@ -200,10 +182,8 @@ class DashboardComponent extends Component {
       this.setState({ errorFileSize: "" });
       this.loader.className = "fullScreen";
       this.loader.firstChild.style.display = "inline-block";
-      // console.log(this.state.base64);
       var formData = new FormData();
       formData.set('base64Image', this.state.base64)
-      console.log(this.state.base64);
       sessionStorage.setItem("base64", this.state.base64);
       axios
         .post(
@@ -213,7 +193,7 @@ class DashboardComponent extends Component {
           console.log(res.data);
           axios
             .post(
-              "http://b758b130.ngrok.io/api/v1/extractDataFromOcr", res.data
+              "http://e3fb5dcd.ngrok.io/api/v1/extractDataFromOcr", res.data
             )
             .then(resp => {
               var temp = [];
@@ -221,9 +201,7 @@ class DashboardComponent extends Component {
                 temp.push({ "subjectName": resp.data.result[i] });
               }
               this.setState({ JsonData: JSON.stringify(temp) });
-              console.log(this.state.JsonData);
               this.getSubjects();
-              console.log(resp.data, "base64");
             })
         })
     }
@@ -240,7 +218,7 @@ class DashboardComponent extends Component {
     });
 
     if (selectedAtLeastOne) {
-      this.renderTable(this.state.data); //function to add the table with selected subjects for downloading
+      this.renderTable(this.state.data);
       var doc = new jsPDF()
       doc.fromHTML(document.getElementsByClassName('pdfPrint')[0], 15, 15)
       doc.save('Selected_Subjects.pdf')
@@ -252,17 +230,13 @@ class DashboardComponent extends Component {
   getSubjects() {
     axios
       .get(
-        "https://dee35bf9.ngrok.io/api/Subject/getSubjects"
-        // this.studentRequestData
+        "https://4c3b3834.ngrok.io/api/Subject/getSubjects"
       )
       .then(res => {
         this.loader.className = "";
         this.loader.firstChild.style.display = "none";
-        // this.props.history.push("/requests/");
-
         this.setState({ data: res.data });
         res.data.map((subject) => {
-          // this.updatedSubjects.push(subject);
           if (subject.isSelected) {
             this.selectRowProp.selected.push(subject.module);
           }

@@ -7,26 +7,8 @@ class HeaderComponent extends Component {
         this.state = {
             firstName: ''
         }
-        this.calledRender = this.calledRender.bind(this);
     }
 
-    calledRender(){
-        console.log("calledRender")
-    }
-    componentDidMount(){
-        console.log("componentDidMount");
-    }
-
-    componentDidCatch(){
-        console.log("componentDidCatch")
-    }
-    componentDidUpdate(){
-        console.log("componentDidUpdate")
-    }
-    componentWillMount(){
-        console.log("componentWillMount")
-    }
-    
     logOut() {
         sessionStorage.clear();
         window.location.href = '/signin/';

@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import "./SignIn.Component.css";
 import axios from "axios";
-import HeaderComponent from "../headerComponent/Header.Component";
 
 
 class SignInComponent extends Component {
-  login = "https://dee35bf9.ngrok.io/api/Login"
-  studentRequestData = "https://dee35bf9.ngrok.io/api/getStudentRequestData?type=all"
-  studentData = "https://dee35bf9.ngrok.io/api/getStudentData/"
+  login = "https://4c3b3834.ngrok.io/api/Login"
+  studentRequestData = "https://4c3b3834.ngrok.io/api/getStudentRequestData?type=all"
+  studentData = "https://4c3b3834.ngrok.io/api/getStudentData/"
   signInObject = {};
   constructor(props) {
     super(props);
@@ -40,7 +39,6 @@ class SignInComponent extends Component {
 
     await axios
       .post(
-        // "http://192.168.0.102:4005/api/login",
         this.login,
         {
           email: this.state.email,
@@ -52,7 +50,6 @@ class SignInComponent extends Component {
           sessionStorage.setItem("isAdmin", res.data.isAdmin);
           axios
             .get(
-              // "http://192.168.0.102:4005/api/getStudentRequestData?type=all"
               this.studentRequestData
             )
             .then(res => {
@@ -60,10 +57,7 @@ class SignInComponent extends Component {
               loader.firstChild.style.display = "none";
               sessionStorage.setItem("userLoggedin", true);
               sessionStorage.setItem("userData", JSON.stringify(res.data));
-              // var header = new HeaderComponent;
-              // header.render();
               window.location.href = "/requests/";
-              // this.props.navigation.state.params.refresh();
             }).catch(error => {
               loader.className = "";
               loader.firstChild.style.display = "none";
@@ -72,7 +66,6 @@ class SignInComponent extends Component {
         else if (res.statusText != "No Content" && (res.data != undefined || res.data != "")) {
           axios
             .get(
-              // "http://192.168.0.102:4005/api/getStudentData/" + res.data.studentID
               this.studentData + res.data.studentID
 
             )
@@ -155,9 +148,6 @@ class SignInComponent extends Component {
                     <div className="errormsgs">
                       {this.state.errormsg}
                     </div>
-                    {/* <div className="mt-4">
-                      <a className="anchor_tag">Forgot password?</a>
-                    </div> */}
                     <hr className="my-4" />
                     <div>Haven't registered yet?</div>
                     <a className="anchor_tag" onClick={this.moveToRegistration}>

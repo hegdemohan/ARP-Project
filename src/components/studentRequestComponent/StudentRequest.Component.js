@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import './StudentRequest.Component.css';
 import axios from 'axios';
-import Base64 from 'Base64';
-import base64 from 'base64topdf';
 
 class StudentRequest extends Component {
     StudentData;
@@ -37,10 +35,8 @@ class StudentRequest extends Component {
             this.transcriptData = JSON.parse(this.Data.transcript.ocrJson);
             console.log((this.transcriptData));
             this.StudentData = JSON.parse(sessionStorage.getItem("UserDetail"));
-            // console.log(this.StudentData);
             this.setState({ data: this.StudentData });
             this.dataSubs = this.StudentData.subjects;
-            // this.setState({ dataSubs: this.StudentData.subjects });
             this.init();
         } else {
             this.props.history.push("/signin/");
@@ -49,14 +45,12 @@ class StudentRequest extends Component {
 
     init() {
         this.StudentData.subjects.map((subject) => {
-            // this.updatedSubjects.push(subject);
             if (subject.isSelected) {
                 this.selectRowProp.selected.push(subject.module);
                 this.selectedSubjects.push(subject);
 
             }
         });
-        // console.log(this.selectedSubjects);
     }
 
     handleRowSelect(row, isSelected, e) {
@@ -86,7 +80,7 @@ class StudentRequest extends Component {
     transcript() {
         this.dataa = this.Data.transcript.fileData;
         var link = document.createElement('a');
-        document.body.appendChild(link); //required in FF, optional for Chrome
+        document.body.appendChild(link);
         link.href = this.dataa;
         link.download = this.Data.firstName + "_Transcript.pdf";
         link.click();
@@ -113,7 +107,7 @@ class StudentRequest extends Component {
         }
         axios
             .post(
-                "https://dee35bf9.ngrok.io/api/approveLearningAgreement", postData
+                "https://4c3b3834.ngrok.io/api/approveLearningAgreement", postData
             )
             .then(res => {
                 loader.className = "";

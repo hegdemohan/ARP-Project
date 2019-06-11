@@ -1,11 +1,6 @@
 import React, { Component } from "react";
 import "./CheckStatus.Component.css";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
-import axios from "axios";
-import ReactDOM from 'react-dom';
-import jsPDF from "jspdf"
-import createReactClass from "create-react-class"
-import { NONAME } from "dns";
 
 class CheckStatusComponent extends Component {
   newUserDiv;
@@ -22,9 +17,9 @@ class CheckStatusComponent extends Component {
   }
 
   componentDidMount() {
-    if(sessionStorage.getItem("userLoggedin")){
+    if (sessionStorage.getItem("userLoggedin")) {
       this.init();
-    }else{
+    } else {
       this.props.history.push("/signin/");
     }
   }

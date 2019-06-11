@@ -36,13 +36,12 @@ class EditSubject extends Component {
             loader.firstChild.style.display = "inline-block";
             axios
                 .get(
-                    "https://dee35bf9.ngrok.io/api/Subject/getSubjects"
+                    "https://4c3b3834.ngrok.io/api/Subject/getSubjects"
 
                 )
                 .then(resp => {
                     loader.className = "";
                     loader.firstChild.style.display = "none";
-                    // console.log("Success");
                     this.setState({ Subs: resp.data });
                 });
         } else {
@@ -64,7 +63,7 @@ class EditSubject extends Component {
         loader.firstChild.style.display = "inline-block";
         axios
             .post(
-                "https://dee35bf9.ngrok.io/api/Subject/addSubject", {
+                "https://4c3b3834.ngrok.io/api/Subject/addSubject", {
                     subjectID: 0,
                     subjectMappingID: 0,
                     module: e.target.elements.module.value,
@@ -74,13 +73,12 @@ class EditSubject extends Component {
             .then((response) => {
                 axios
                     .get(
-                        "https://dee35bf9.ngrok.io/api/Subject/getSubjects"
+                        "https://4c3b3834.ngrok.io/api/Subject/getSubjects"
 
                     )
                     .then(resp => {
                         loader.className = "";
                         loader.firstChild.style.display = "none";
-                        console.log("Success adding");
                         this.setState({ Subs: resp.data });
                     });
                 this.setState({
@@ -89,8 +87,6 @@ class EditSubject extends Component {
             })
             .catch(error => {
                 if (error.response.status == 409) {
-                    console.log(error.response.status);
-                    console.log(error.message);
                     this.setState({ errorData: "Subject Module or Subject Name already exists" });
                 }
             });
@@ -116,7 +112,7 @@ class EditSubject extends Component {
         loader.firstChild.style.display = "inline-block";
         axios
             .put(
-                "https://dee35bf9.ngrok.io/api/Subject/updateSubject", {
+                "https://4c3b3834.ngrok.io/api/Subject/updateSubject", {
                     subjectID: this.deleteSubs.subjectID,
                     subjectName: this.deleteSubs.subjectName,
                     module: this.deleteSubs.module,
@@ -125,14 +121,12 @@ class EditSubject extends Component {
             .then((response) => {
                 axios
                     .get(
-                        "https://dee35bf9.ngrok.io/api/Subject/getSubjects"
+                        "https://4c3b3834.ngrok.io/api/Subject/getSubjects"
 
                     )
                     .then(resp => {
                         loader.className = "";
                         loader.firstChild.style.display = "none";
-                        console.log("deleted");
-                        // console.log("Success");
                         this.setState({ Subs: resp.data });
                     });
 
@@ -184,13 +178,9 @@ class EditSubject extends Component {
         blurToSave: true,
         afterSaveCell: (row, cellName, cellValue) => {
             this.editSubs = row;
-            // console.log(this.editSubs);
-            // console.log(this.editSubs.subjectName);
-            // console.log(this.editSubs.module);
-
             axios
                 .put(
-                    "https://dee35bf9.ngrok.io/api/Subject/updateSubject", {
+                    "https://4c3b3834.ngrok.io/api/Subject/updateSubject", {
                         subjectID: this.editSubs.subjectID,
                         subjectMappingID: 0,
                         subjectName: this.editSubs.subjectName,
@@ -200,12 +190,10 @@ class EditSubject extends Component {
                 .then((response) => {
                     axios
                         .get(
-                            "https://dee35bf9.ngrok.io/api/Subject/getSubjects"
+                            "https://4c3b3834.ngrok.io/api/Subject/getSubjects"
 
                         )
                         .then(resp => {
-                            console.log("updated sub");
-                            // console.log("Success");
                             this.setState({ Subs: resp.data });
                         });
                 });
@@ -231,7 +219,6 @@ class EditSubject extends Component {
                                     <TableHeaderColumn dataField="module" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">Module</TableHeaderColumn>
                                     <TableHeaderColumn dataField="subjectName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">Subject Name</TableHeaderColumn>
                                     <TableHeaderColumn dataField='edit' dataFormat={this.editFormatter} editable={false} dataAlign="center">Delete Subject</TableHeaderColumn>
-                                    {/* <TableHeaderColumn width={'180'} dataField='id' dataFormat={props.colFormatter} dataAlign="center">Link</TableHeaderColumn> */}
                                 </BootstrapTable>
                             </div>
                         </div>
@@ -257,7 +244,6 @@ class EditSubject extends Component {
                                         <h5 className="text-center">Subject Details</h5>
                                         <hr className="my-4" />
                                         <p className="text-infos">Please enter all the fields</p>
-                                        {/* <h5 className="card-title text-center">Sign In</h5> */}
                                         <form className="form-signin" onSubmit={this.submitModal}>
                                             <div className="form-label-group">
                                                 <input
@@ -265,8 +251,6 @@ class EditSubject extends Component {
                                                     id="subjectModule"
                                                     name="module"
                                                     className="form-control text-center"
-                                                    // placeholder="subjectModule address"
-                                                    // onChange={this.onChange}
                                                     required
                                                 />
                                                 <label htmlFor="subjectModule">Subject Module</label>
@@ -277,8 +261,6 @@ class EditSubject extends Component {
                                                     id="subjectName"
                                                     name="subName"
                                                     className="form-control text-center"
-                                                    // placeholder="Mobile subjectName"
-                                                    // onChange={this.onChange}
                                                     required
                                                 />
                                                 <label htmlFor="subjectName">Subject Name</label>
@@ -288,13 +270,11 @@ class EditSubject extends Component {
                                             </div>
                                             <button
                                                 className="btn btn-lg btn-primary btn-block text-uppercase"
-                                                type="submit"
-                                            >
+                                                type="submit">
                                                 SUBMIT
                       </button>
                                             <button
                                                 className="btn btn-lg btn-secondary btn-block text-uppercase" onClick={this.closeSubModal1}
-
                                             >
                                                 CANCEL
                       </button>

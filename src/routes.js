@@ -8,7 +8,6 @@ import Registration from "./components/registrationComponent/Registration.Compon
 import StudentRequest from "./components/studentRequestComponent/StudentRequest.Component";
 import EditSubject from "./components/editSubjectComponent/EditSubject.Component";
 import CheckStatus from "./components/checkStatusComponent/CheckStatus.Component"
-import HeaderComponent from "./components/headerComponent/Header.Component";
 
 class Router extends Component {
   state = {};
@@ -16,7 +15,6 @@ class Router extends Component {
     return (
       <div>
         <BrowserRouter>
-          {/* <HeaderComponent /> */}
           <Switch>
             <Redirect exact from="/" to="/signin/" />
             <Route exact path="/signin/" component={SignInComponent} />
