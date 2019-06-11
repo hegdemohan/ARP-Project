@@ -304,7 +304,7 @@ class DashboardComponent extends Component {
               </div>
             </div>
           </div>
-          <div className="pdfPrint">
+          <div className="pdfPrint hidden">
           </div>
         </div>
       </div>
