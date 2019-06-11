@@ -11,7 +11,7 @@ import Router from "./routes";
 function App() {
   return (
     <div className="App">
-      <HeaderComponent />
+      {/* <HeaderComponent /> */}
       <Router />
     </div>
   );

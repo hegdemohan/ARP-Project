@@ -9,7 +9,7 @@ import createReactClass from "create-react-class"
 class DashboardComponent extends Component {
   afterSelction = {}
   selectRowProp = {}
-  studentDataUrl = "https://396603ad.ngrok.io/api/getStudentData/";
+  studentDataUrl = "https://58d3d4b0.ngrok.io/api/getStudentData/";
   newUserDiv;
   loader;
   // updatedSubjects = [];
@@ -135,7 +135,7 @@ class DashboardComponent extends Component {
       }
       axios
         .post(
-          "https://396603ad.ngrok.io/api/saveStudentData", data
+          "https://58d3d4b0.ngrok.io/api/saveStudentData", data
         )
         .then(res => {
 
@@ -201,20 +201,39 @@ class DashboardComponent extends Component {
   }
 
   upload() {
-    this.loader.className = "fullScreen";
-    this.loader.firstChild.style.display = "inline-block";
-    // console.log(this.state.base64);
-    var formData = new FormData();
-    formData.set('base64Image', this.state.base64)
-    axios
-      .post(
-        "https://api.ocr.space/parse/image", formData, { headers: { "apikey": this.state.apikey, "Content-Type": 'form-data' } }
-      )
-      .then(res => {
-        this.loader.className = "";
-        this.loader.firstChild.style.display = "none";
-      })
-    this.getSubjects();
+    if (this.state.base64) {
+      this.loader.className = "fullScreen";
+      this.loader.firstChild.style.display = "inline-block";
+      // console.log(this.state.base64);
+      var formData = new FormData();
+      formData.set('base64Image', this.state.base64)
+      axios
+        .post(
+          "https://api.ocr.space/parse/image", formData, { headers: { "apikey": this.state.apikey, "Content-Type": 'form-data' } }
+        )
+        .then(res => {
+          console.log(res.data);
+          axios
+            .post(
+              "http://16a3c8f4.ngrok.io/api/v1/extractDataFromOcr", res.data
+            )
+            .then(resp => {
+              console.log(resp.data, "base64");
+              this.loader.className = "";
+              this.loader.firstChild.style.display = "none";
+            })
+        })
+      this.getSubjects();
+    }
+    else {
+      console.log("no upload");
+      // return (
+      //   <div className="errormsgs my-3">
+
+      //     Please upload your Transcript!
+      //   </div>
+      // )
+    }
     //Send the document to API
   }
 
@@ -241,7 +260,7 @@ class DashboardComponent extends Component {
     this.loader.firstChild.style.display = "inline-block";
     axios
       .get(
-        "https://396603ad.ngrok.io/api/Subject/getSubjects"
+        "https://58d3d4b0.ngrok.io/api/Subject/getSubjects"
         // this.studentRequestData
       )
       .then(res => {

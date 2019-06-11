@@ -105,7 +105,7 @@ class StudentRequest extends Component {
         }
         axios
             .post(
-                "https://396603ad.ngrok.io/api/approveLearningAgreement", postData
+                "https://58d3d4b0.ngrok.io/api/approveLearningAgreement", postData
             )
             .then(res => {
                 loader.className = "";

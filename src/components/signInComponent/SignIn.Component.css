@@ -19,7 +19,12 @@ body {
   font-weight: 300;
   font-size: 1.5rem;
 }
-
+.errormsgs {
+  color: red;
+  font-size: 15px;
+  margin-top: 25px !important;
+  margin-bottom: 0px !important;
+}
 .card-signin .card-body {
   padding: 2rem;
 }
@@ -109,26 +114,26 @@ body {
   background-color: #3b5998 !important;
 }
 
-.text-center{
-  text-align: center
+.text-center {
+  text-align: center;
 }
 
-.reducedOpacity{
+.reducedOpacity {
   opacity: 0.5;
 }
 
-.fullScreen{
+.fullScreen {
   height: 100%;
   width: 100%;
   z-index: 9999;
   position: fixed;
 }
 
-.fullScreen + div{
+.fullScreen + div {
   opacity: 0.5;
 }
 
-.fullScreen:nth-child(2){
+.fullScreen:nth-child(2) {
   opacity: 0.5;
 }
 

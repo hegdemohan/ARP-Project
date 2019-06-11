@@ -35,7 +35,7 @@ class EditSubject extends Component {
         loader.firstChild.style.display = "inline-block";
         axios
             .get(
-                "https://396603ad.ngrok.io/api/Subject/getSubjects"
+                "https://58d3d4b0.ngrok.io/api/Subject/getSubjects"
 
             )
             .then(resp => {
@@ -60,7 +60,7 @@ class EditSubject extends Component {
         loader.firstChild.style.display = "inline-block";
         axios
             .post(
-                "https://396603ad.ngrok.io/api/Subject/addSubject", {
+                "https://58d3d4b0.ngrok.io/api/Subject/addSubject", {
                     subjectID: 0,
                     subjectMappingID: 0,
                     module: e.target.elements.module.value,
@@ -70,7 +70,7 @@ class EditSubject extends Component {
             .then((response) => {
                 axios
                     .get(
-                        "https://396603ad.ngrok.io/api/Subject/getSubjects"
+                        "https://58d3d4b0.ngrok.io/api/Subject/getSubjects"
 
                     )
                     .then(resp => {
@@ -112,7 +112,7 @@ class EditSubject extends Component {
         loader.firstChild.style.display = "inline-block";
         axios
             .put(
-                "https://396603ad.ngrok.io/api/Subject/updateSubject", {
+                "https://58d3d4b0.ngrok.io/api/Subject/updateSubject", {
                     subjectID: this.deleteSubs.subjectID,
                     subjectName: this.deleteSubs.subjectName,
                     module: this.deleteSubs.module,
@@ -121,7 +121,7 @@ class EditSubject extends Component {
             .then((response) => {
                 axios
                     .get(
-                        "https://396603ad.ngrok.io/api/Subject/getSubjects"
+                        "https://58d3d4b0.ngrok.io/api/Subject/getSubjects"
 
                     )
                     .then(resp => {
@@ -186,7 +186,7 @@ class EditSubject extends Component {
 
             axios
                 .put(
-                    "https://396603ad.ngrok.io/api/Subject/updateSubject", {
+                    "https://58d3d4b0.ngrok.io/api/Subject/updateSubject", {
                         subjectID: this.editSubs.subjectID,
                         subjectMappingID: 0,
                         subjectName: this.editSubs.subjectName,
@@ -196,7 +196,7 @@ class EditSubject extends Component {
                 .then((response) => {
                     axios
                         .get(
-                            "https://396603ad.ngrok.io/api/Subject/getSubjects"
+                            "https://58d3d4b0.ngrok.io/api/Subject/getSubjects"
 
                         )
                         .then(resp => {

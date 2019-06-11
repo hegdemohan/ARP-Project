@@ -1,20 +1,21 @@
 import React, { Component } from "react";
 import "./SignIn.Component.css";
 import axios from "axios";
-var http = require("http");
-http.post = require("http-post");
+
 
 class SignInComponent extends Component {
-  login = "https://396603ad.ngrok.io/api/Login"
-  studentRequestData = "https://396603ad.ngrok.io/api/getStudentRequestData?type=all"
-  studentData = "https://396603ad.ngrok.io/api/getStudentData/"
+  login = "https://58d3d4b0.ngrok.io/api/Login"
+  studentRequestData = "https://58d3d4b0.ngrok.io/api/getStudentRequestData?type=all"
+  studentData = "https://58d3d4b0.ngrok.io/api/getStudentData/"
   signInObject = {};
   constructor(props) {
     super(props);
     this.state = {
       email: "",
       passWord: "",
-      responseObject: ""
+      responseObject: "",
+      errormsg: ""
+
     };
 
     this.signIn = this.signIn.bind(this);
@@ -38,7 +39,6 @@ class SignInComponent extends Component {
       )
       .then(res => {
         console.log(res);
-        console.log(res.data);
         if (res.statusText != "No Content" && (res.data != undefined || res.data != "") && res.data.isAdmin) {
           axios
             .get(
@@ -49,6 +49,11 @@ class SignInComponent extends Component {
               loader.className = "";
               loader.firstChild.style.display = "none";
               this.props.history.push("/requests/");
+              // this.props.navigation.state.params.refresh();
+            }).catch(error => {
+              loader.className = "";
+              loader.firstChild.style.display = "none";
+              console.log(error.response);
             });
         }
         else if (res.statusText != "No Content" && (res.data != undefined || res.data != "")) {
@@ -62,24 +67,30 @@ class SignInComponent extends Component {
               loader.className = "";
               loader.firstChild.style.display = "none";
               localStorage.setItem("StudentData", JSON.stringify(resp.data));
-              if (resp.data.subjects.length == 0) {
+              if (resp.data.subjects.length === 0) {
+                console.log("newuser");
                 localStorage.setItem("newUser", "true");
-            } else {
-              localStorage.setItem("newUser", "false");
-            }
+              }
+              else {
+                localStorage.setItem("newUser", "false");
+              }
               this.props.history.push("/studentDetails/");
+              // this.props.navigation.state.params.refresh();
+
             });
         }
+        else {
+          loader.className = "";
+          loader.firstChild.style.display = "none";
+          this.setState({ errormsg: "Invalid Credentials" });
+          // this.state.errormsg = "Invalid Credentials";
+          console.log(this.state.errormsg);
+          console.log("no login");
+        }
       }).catch(error => {
+        loader.className = "";
+        loader.firstChild.style.display = "none";
         console.log(error.response);
-        // if (error.response.status == 409) {
-        //     this.setState(prevState => ({
-        //         errorData: {
-        //             ...prevState.errorData,
-        //             errorUserExist: "Matriculation Number or Email Address already exists"
-        //         }
-        //     }))
-        // }
       });
   }
 
@@ -126,6 +137,7 @@ class SignInComponent extends Component {
                       />
                       <label htmlFor="passWord">Password</label>
                     </div>
+
                     <button
                       className="btn btn-lg btn-primary btn-block text-uppercase"
                       type="submit"
@@ -133,6 +145,9 @@ class SignInComponent extends Component {
                     >
                       Sign in
                   </button>
+                    <div className="errormsgs">
+                      {this.state.errormsg}
+                    </div>
                     <div className="mt-4">
                       <a className="anchor_tag">Forgot password?</a>
                     </div>

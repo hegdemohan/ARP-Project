@@ -6,7 +6,13 @@ class HeaderComponent extends Component {
         route: ''
     }
 
+    logOut() {
+        localStorage.clear();
+        window.location.href = '/signin/';
+    }
+
     render() {
+        var data = JSON.parse(localStorage.getItem("StudentData"));
         return (<nav className="navbar navbar-expand-lg navbar-light bg-light">
             <a className="navbar-brand" href="#">Auto-Learning-Agreement</a>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,11 +22,11 @@ class HeaderComponent extends Component {
             <div className="collapse navbar-collapse row" id="navbarSupportedContent">
                 <div className="col-2 offset-10">
                     <ul className="navbar-nav mr-auto">
-                        {window.location.href.includes('/signin') ? null :
+                        {window.location.href.includes('/signin/') ? null :
                             <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">User Name</a>
+                                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{data.firstName}</a>
                                 <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a className="dropdown-item" href="#">Sign out</a>
+                                    <a className="dropdown-item" href="#" onClick={this.logOut}>Sign out</a>
                                 </div>
                             </li>}
                     </ul>

@@ -38,6 +38,7 @@ class StudentDetails extends Component {
         // this.temp = { "firstName": "Mohan", "lastName": "Hegde", "matriculationNo": "1212", "subjects": [] }
         var data = JSON.parse(localStorage.getItem("StudentData"));
         var newUser = localStorage.getItem("newUser");
+        // console.log(newUser);
         this.setState({ userDetailsObject: data });
         // this.state.userDetailsObject.firstName = data.firstName;
         // this.state.userDetailsObject.lastName = data.lastName;
@@ -67,15 +68,15 @@ class StudentDetails extends Component {
                                 <hr className="my-4"></hr>
                                 <div className="row">
                                     <div className="col-6">
-                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.state.newUser} onClick={() => this.navigate('new')}>Add new</button>
+                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" id="btn-disable" type="submit" disabled={!this.state.newUser} onClick={() => this.navigate('new')}>Add new</button>
                                     </div>
                                     <div className="col-6">
-                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={this.state.newUser} onClick={() => this.navigate('edit')}>Edit</button>
+                                        <button className="general-button btn btn-lg btn-primary btn-block text-uppercase" id="btn-disable1" type="submit" disabled={this.state.newUser} onClick={() => this.navigate('edit')}>Edit</button>
                                     </div>
                                 </div>
                                 <div className="row my-4">
                                     <div className="col-12">
-                                        <button className="general-button btn btn-lg btn-success btn-block text-uppercase" type="submit" disabled={this.state.newUser} onClick={() => this.navigate('statusCheck')}>Check Status</button>
+                                        <button className="general-button btn btn-lg btn-success btn-block text-uppercase" id="btn-disable2" type="submit" disabled={this.state.newUser} onClick={() => this.navigate('statusCheck')}>Check Status</button>
                                     </div>
                                 </div>
                             </div>

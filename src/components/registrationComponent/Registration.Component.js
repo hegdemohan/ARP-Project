@@ -38,7 +38,7 @@ class Registration extends Component {
             await axios
                 .post(
                     // "http://192.168.0.102:4005/api/register",
-                    "https://396603ad.ngrok.io/api/register",
+                    "https://58d3d4b0.ngrok.io/api/register",
                     {
                         firstName: this.state.firstName,
                         lastName: this.state.lastName,
