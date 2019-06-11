@@ -16,7 +16,7 @@ class Router extends Component {
     return (
       <div>
         <BrowserRouter>
-          <HeaderComponent />
+          {/* <HeaderComponent /> */}
           <Switch>
             <Redirect exact from="/" to="/signin/" />
             <Route exact path="/signin/" component={SignInComponent} />
@@ -27,7 +27,6 @@ class Router extends Component {
             <Route path={"/StudentRequest/"} component={StudentRequest} />
             <Route path={"/editSubjects/"} component={EditSubject} />
             <Route path={"/checkStatus/"} component={CheckStatus} />
-
           </Switch>
         </BrowserRouter>
       </div>

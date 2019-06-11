@@ -5,27 +5,36 @@ class HeaderComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: ''
+            firstName: ''
         }
-        this.init = this.init.bind(this);
-        this.render = this.render.bind(this);
+        this.calledRender = this.calledRender.bind(this);
     }
 
-    componentWillMount() {
-        this.init();
+    calledRender(){
+        console.log("calledRender")
+    }
+    componentDidMount(){
+        console.log("componentDidMount");
     }
 
-    init() {
-        // this.setState({data : );
-        this.render();
+    componentDidCatch(){
+        console.log("componentDidCatch")
     }
-
+    componentDidUpdate(){
+        console.log("componentDidUpdate")
+    }
+    componentWillMount(){
+        console.log("componentWillMount")
+    }
+    
     logOut() {
         sessionStorage.clear();
         window.location.href = '/signin/';
     }
 
     render() {
+        console.log("Header called");
+        this.calledRender();
         var data = JSON.parse(sessionStorage.getItem("StudentData"));
         return (<nav className="navbar navbar-expand-lg navbar-light bg-light">
             <a className="navbar-brand" href="#">Auto-Learning-Agreement</a>
@@ -35,7 +44,7 @@ class HeaderComponent extends Component {
             <div className="collapse navbar-collapse row" id="navbarSupportedContent">
                 <div className="col-2 offset-10">
                     <ul className="navbar-nav mr-auto">
-                        {window.location.href.includes('/signin/') || window.location.href.includes('') && (data == null) ? null :
+                        {(data == null) ? null :
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{data.firstName}</a>
                                 <div className="dropdown-menu" aria-labelledby="navbarDropdown">

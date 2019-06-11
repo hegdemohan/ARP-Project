@@ -84,10 +84,7 @@ class SignInComponent extends Component {
                 sessionStorage.setItem("newUser", "false");
               }
               sessionStorage.setItem("userLoggedin", true);
-              var header = new HeaderComponent;
-              header.render();
-              this.props.history.push("/studentDetails/");
-              // this.props.navigation.state.params.refresh();
+              window.location.href = '/studentDetails/';
             });
         }
         else {
