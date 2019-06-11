@@ -59,7 +59,10 @@ class SignInComponent extends Component {
               loader.className = "";
               loader.firstChild.style.display = "none";
               sessionStorage.setItem("userLoggedin", true);
-              this.props.history.push("/requests/");
+              sessionStorage.setItem("userData", JSON.stringify(res.data));
+              // var header = new HeaderComponent;
+              // header.render();
+              window.location.href = "/requests/";
               // this.props.navigation.state.params.refresh();
             }).catch(error => {
               loader.className = "";
@@ -76,7 +79,7 @@ class SignInComponent extends Component {
             .then(resp => {
               loader.className = "";
               loader.firstChild.style.display = "none";
-              sessionStorage.setItem("StudentData", JSON.stringify(resp.data));
+              sessionStorage.setItem("userData", JSON.stringify(resp.data));
               if (resp.data.subjects.length === 0) {
                 sessionStorage.setItem("newUser", "true");
               }

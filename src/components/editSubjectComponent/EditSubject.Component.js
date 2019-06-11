@@ -30,14 +30,14 @@ class EditSubject extends Component {
     }
 
     componentDidMount() {
-        if(sessionStorage.getItem("userLoggedin")){
+        if (sessionStorage.getItem("userLoggedin")) {
             var loader = document.getElementById("loader");
             loader.className = "fullScreen";
             loader.firstChild.style.display = "inline-block";
             axios
                 .get(
                     "https://dee35bf9.ngrok.io/api/Subject/getSubjects"
-    
+
                 )
                 .then(resp => {
                     loader.className = "";
@@ -45,7 +45,7 @@ class EditSubject extends Component {
                     // console.log("Success");
                     this.setState({ Subs: resp.data });
                 });
-        }else{
+        } else {
             this.props.history.push("/signin/");
         }
 

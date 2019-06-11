@@ -33,9 +33,9 @@ class HeaderComponent extends Component {
     }
 
     render() {
-        console.log("Header called");
-        this.calledRender();
-        var data = JSON.parse(sessionStorage.getItem("StudentData"));
+        var data = JSON.parse(sessionStorage.getItem("userData"));
+        var isAdmin = JSON.parse(sessionStorage.getItem("isAdmin"));
+
         return (<nav className="navbar navbar-expand-lg navbar-light bg-light">
             <a className="navbar-brand" href="#">Auto-Learning-Agreement</a>
             <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,7 @@ class HeaderComponent extends Component {
                     <ul className="navbar-nav mr-auto">
                         {(data == null) ? null :
                             <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{data.firstName}</a>
+                                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{isAdmin ? <span><i className="fa fa-user"></i> Admin </span> : <span><i className="fa fa-user"></i> {data.firstName}</span>}</a>
                                 <div className="dropdown-menu" aria-labelledby="navbarDropdown">
                                     <a className="dropdown-item" href="#" onClick={this.logOut}>Sign out</a>
                                 </div>

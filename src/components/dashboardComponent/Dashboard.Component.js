@@ -22,8 +22,9 @@ class DashboardComponent extends Component {
       data: "",
       apikey: "88731e0e5888957",
       base64: "",
-      errorFileSize:"",
-      uploadedTranscript:false
+      JsonData: [],
+      errorFileSize: "",
+      uploadedTranscript: false
     };
     this.init = this.init.bind(this);
     this.onFileChange = this.onFileChange.bind(this);
@@ -38,9 +39,9 @@ class DashboardComponent extends Component {
   }
 
   componentDidMount() {
-    if(sessionStorage.getItem("userLoggedin")){
+    if (sessionStorage.getItem("userLoggedin")) {
       this.init();
-    }else{
+    } else {
       this.props.history.push("/signin/");
     }
   }
@@ -84,8 +85,8 @@ class DashboardComponent extends Component {
     };
     this.loader = document.getElementById("loader");
     if (sessionStorage.getItem("newUser") == "false") {
-      this.setState({uploadedTranscript:true});
-      var studentData = JSON.parse(sessionStorage.getItem("StudentData"));
+      this.setState({ uploadedTranscript: true });
+      var studentData = JSON.parse(sessionStorage.getItem("userData"));
       this.setState({ data: studentData.subjects });
 
       studentData.subjects.map((subject) => {
@@ -103,11 +104,11 @@ class DashboardComponent extends Component {
   }
 
   onFileChange(e, file) {
-    this.setState({errorFileSize: ""})
+    this.setState({ errorFileSize: "" })
     var selectedFile = file || e.target.files[0];
     var fileReader = new FileReader();
-    if(selectedFile){
-      if(selectedFile.size < 1000000){
+    if (selectedFile) {
+      if (selectedFile.size < 1000000) {
         const that = this;
         // var base64;
         fileReader.onload = function (fileLoadedEvent) {
@@ -117,8 +118,8 @@ class DashboardComponent extends Component {
         };
         fileReader.readAsDataURL(selectedFile);
         this.setState({ fileName: e.target.files[0].name });
-      }else{
-        this.setState({errorFileSize: "Maximum file size allowed is 1MB. Please reduce the file size and try again."})
+      } else {
+        this.setState({ errorFileSize: "Maximum file size allowed is 1MB. Please reduce the file size and try again." })
       }
     }
   }
@@ -134,7 +135,7 @@ class DashboardComponent extends Component {
     });
 
     if (selectedAtLeastOne) {
-      var studentData = JSON.parse(sessionStorage.getItem('StudentData'));
+      var studentData = JSON.parse(sessionStorage.getItem('userData'));
       var data = {
         "firstName": studentData.firstName,
         "lastName": studentData.lastName,
@@ -144,7 +145,8 @@ class DashboardComponent extends Component {
         "isUpdate": sessionStorage.getItem("newUser") == "true" ? false : true,
         "transcript": {
           "fileData": this.state.base64,
-          "fileName": this.state.fileName
+          "fileName": this.state.fileName,
+          "ocrJson": this.state.JsonData
         }
       }
       axios
@@ -162,7 +164,7 @@ class DashboardComponent extends Component {
             .then(resp => {
               this.loader.className = "";
               this.loader.firstChild.style.display = "none";
-              sessionStorage.setItem("StudentData", JSON.stringify(resp.data));
+              sessionStorage.setItem("userData", JSON.stringify(resp.data));
               if (resp.data.subjects.length == 0) {
                 sessionStorage.setItem("newUser", "true");
               } else {
@@ -194,13 +196,15 @@ class DashboardComponent extends Component {
 
   upload() {
     if (this.state.base64) {
-      this.setState({uploadedTranscript: true});
-      this.setState({errorFileSize: ""});
+      this.setState({ uploadedTranscript: true });
+      this.setState({ errorFileSize: "" });
       this.loader.className = "fullScreen";
       this.loader.firstChild.style.display = "inline-block";
       // console.log(this.state.base64);
       var formData = new FormData();
       formData.set('base64Image', this.state.base64)
+      console.log(this.state.base64);
+      sessionStorage.setItem("base64", this.state.base64);
       axios
         .post(
           "https://api.ocr.space/parse/image", formData, { headers: { "apikey": this.state.apikey, "Content-Type": 'form-data' } }
@@ -212,7 +216,14 @@ class DashboardComponent extends Component {
               "http://b758b130.ngrok.io/api/v1/extractDataFromOcr", res.data
             )
             .then(resp => {
+              var temp = [];
+              for (var i = 0; i < resp.data.result.length; i++) {
+                temp.push({ "subjectName": resp.data.result[i] });
+              }
+              this.setState({ JsonData: JSON.stringify(temp) });
+              console.log(this.state.JsonData);
               this.getSubjects();
+              console.log(resp.data, "base64");
             })
         })
     }
@@ -303,7 +314,7 @@ class DashboardComponent extends Component {
 
 function PdfContent(props) {
   var subjectsSelected = [];
-  var studentData = JSON.parse(sessionStorage.getItem('StudentData'));
+  var studentData = JSON.parse(sessionStorage.getItem('userData'));
   if (props.data != "") {
     props.data.map((subject) => {
       if (subject.isSelected) {

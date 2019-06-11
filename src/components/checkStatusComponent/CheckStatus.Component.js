@@ -31,7 +31,7 @@ class CheckStatusComponent extends Component {
 
   init() {
     var selectedSubjects = [];
-    this.studentData = JSON.parse(sessionStorage.getItem("StudentData"));
+    this.studentData = JSON.parse(sessionStorage.getItem("userData"));
     this.studentData.subjects.map(function (subject) {
       if (subject.isSelected) {
         selectedSubjects.push(subject);

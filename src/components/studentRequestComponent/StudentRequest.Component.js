@@ -2,11 +2,16 @@ import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import './StudentRequest.Component.css';
 import axios from 'axios';
+import Base64 from 'Base64';
+import base64 from 'base64topdf';
 
 class StudentRequest extends Component {
     StudentData;
-    transcriptData;
+    transcriptData = [];
+    subData = [];
     dataSubs;
+    Data;
+    dataa;
     selectedSubjects = [];
     constructor(props) {
         super(props)
@@ -18,7 +23,7 @@ class StudentRequest extends Component {
         this.init = this.init.bind(this);
         this.approve = this.approve.bind(this);
         this.handleRowSelect = this.handleRowSelect.bind(this);
-
+        this.transcript = this.transcript.bind(this);
 
     }
     componentDidMount() {
@@ -28,10 +33,14 @@ class StudentRequest extends Component {
                 selected: [],
                 onSelect: this.handleRowSelect
             };
-            this.transcriptData = JSON.parse(sessionStorage.getItem("StudentRequestData"));
+            this.Data = JSON.parse(sessionStorage.getItem("StudentRequestData"));
+            this.transcriptData = JSON.parse(this.Data.transcript.ocrJson);
+            console.log((this.transcriptData));
             this.StudentData = JSON.parse(sessionStorage.getItem("UserDetail"));
+            // console.log(this.StudentData);
             this.setState({ data: this.StudentData });
             this.dataSubs = this.StudentData.subjects;
+            // this.setState({ dataSubs: this.StudentData.subjects });
             this.init();
         } else {
             this.props.history.push("/signin/");
@@ -47,6 +56,7 @@ class StudentRequest extends Component {
 
             }
         });
+        // console.log(this.selectedSubjects);
     }
 
     handleRowSelect(row, isSelected, e) {
@@ -73,7 +83,15 @@ class StudentRequest extends Component {
         console.log(this.dataSubs);
 
     }
-
+    transcript() {
+        this.dataa = this.Data.transcript.fileData;
+        var link = document.createElement('a');
+        document.body.appendChild(link); //required in FF, optional for Chrome
+        link.href = this.dataa;
+        link.download = this.Data.firstName + "_Transcript.pdf";
+        link.click();
+        link.remove();
+    }
     approve() {
         var loader = document.getElementById("loader");
         loader.className = "fullScreen";
@@ -85,20 +103,10 @@ class StudentRequest extends Component {
             "matriculationNumber": this.state.data.matriculationNumber,
             "studentID": this.state.data.studentID,
             "subjects": this.dataSubs,
-            // [
-            //     {
-
-            //         "subjectID": subject.subjectID,
-            //         "subjectMappingID": subject.subjectMappingID,
-            //         "subjectName": subject.subjectName,
-            //         "module": subject.module,
-            //         "isSelected": true,
-            //         "isRejectedByAdmin": true
-            //     }
-            // ],
             "transcript": {
-                "fileData": this.transcriptData.transcript.base64,
-                "fileName": this.transcriptData.transcript.fileName
+                "fileData": this.Data.transcript.base64,
+                "fileName": this.Data.transcript.fileName,
+                "ocrJson": this.Data.transcript.ocrJson
             },
             "isUpdate": true,
             "isLearningAgreementApproved": true
@@ -122,22 +130,34 @@ class StudentRequest extends Component {
                 </div>
                 <div className="container">
                     <div className="row">
-                        <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                            <div className="card card-student my-5">
+                        <div className="col-12 mx-auto">
+                            <div className="card my-5">
                                 <div className="card-body">
-                                    <h3 className="card-title text-center">Student Details</h3>
+                                    <h2 className="card-title text-center">Student Details</h2>
                                     <hr className="my-6"></hr>
-                                    <div className="row">
-                                        <div className="col-6">First Name:</div><div className="col-6">{this.state.data.firstName}</div>
-                                        <div className="col-6">Last Name:</div><div className="col-6">{this.state.data.lastName}</div>
-                                        <div className="col-6">Matriculation Number:</div><div className="col-6">{this.state.data.matriculationNumber}</div>
-                                        <h2 className="col-12 my-3">Requested Subjects:</h2>
-                                        <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.selectedSubjects}>
-                                            <TableHeaderColumn isKey dataField="module" dataAlign="center">Subject ID</TableHeaderColumn>
-                                            <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
-                                        </BootstrapTable>
-                                        <button className="btn btn-primary my-3 button" onClick={this.approve}>Approve</button>
+                                    <button className="btn btn-primary my-3 trans_btn" onClick={this.transcript}>Download Transcript</button>
+                                    <div className="input_data">
+                                        <div><b>First Name: </b>{this.state.data.firstName}</div>
+                                        <div><b>Last Name: </b>{this.state.data.lastName}</div>
+                                        <div><b>Matriculation Number: </b>{this.state.data.matriculationNumber}</div>
                                     </div>
+                                    <div className="row">
+                                        <div className="col-6">
+                                            <h4 className="col-12 my-3">Requested Subjects</h4>
+                                            <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.selectedSubjects}>
+                                                <TableHeaderColumn isKey dataField="module" dataAlign="center">Subject ID</TableHeaderColumn>
+                                                <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
+                                            </BootstrapTable>
+                                        </div>
+                                        <div className="col-6">
+                                            <h4 className="col-12 my-3"> Subjects in the Transcript</h4>
+                                            <BootstrapTable version='4' className="table table-striped" data={this.transcriptData}>
+                                                <TableHeaderColumn isKey dataField="subjectName" dataAlign="center">Subjects</TableHeaderColumn>
+                                            </BootstrapTable>
+                                        </div>
+                                    </div>
+                                    <button className="btn btn-primary my-3" onClick={this.approve}>Approve</button>
+                                    {/* </div> */}
                                 </div>
                             </div>
                         </div>
