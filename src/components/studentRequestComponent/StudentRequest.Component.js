@@ -22,20 +22,20 @@ class StudentRequest extends Component {
 
     }
     componentDidMount() {
-        this.selectRowProp = {
-            mode: 'checkbox',
-            selected: [],
-            onSelect: this.handleRowSelect
-            // selected: false
-            // unelectable: ["row1"]
-        };
-        this.transcriptData = JSON.parse(localStorage.getItem("StudentRequestData"));
-        this.StudentData = JSON.parse(localStorage.getItem("UserDetail"));
-        console.log(this.StudentData);
-        this.setState({ data: this.StudentData });
-        this.dataSubs = this.StudentData.subjects;
-        // this.setState({ dataSubs: this.StudentData.subjects });
-        this.init();
+        if (sessionStorage.getItem("userLoggedin")) {
+            this.selectRowProp = {
+                mode: 'checkbox',
+                selected: [],
+                onSelect: this.handleRowSelect
+            };
+            this.transcriptData = JSON.parse(sessionStorage.getItem("StudentRequestData"));
+            this.StudentData = JSON.parse(sessionStorage.getItem("UserDetail"));
+            this.setState({ data: this.StudentData });
+            this.dataSubs = this.StudentData.subjects;
+            this.init();
+        } else {
+            this.props.history.push("/signin/");
+        }
     }
 
     init() {
@@ -105,7 +105,7 @@ class StudentRequest extends Component {
         }
         axios
             .post(
-                "https://58d3d4b0.ngrok.io/api/approveLearningAgreement", postData
+                "https://dee35bf9.ngrok.io/api/approveLearningAgreement", postData
             )
             .then(res => {
                 loader.className = "";

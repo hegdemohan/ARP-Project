@@ -22,12 +22,16 @@ class CheckStatusComponent extends Component {
   }
 
   componentDidMount() {
-    this.init();
+    if(sessionStorage.getItem("userLoggedin")){
+      this.init();
+    }else{
+      this.props.history.push("/signin/");
+    }
   }
 
   init() {
     var selectedSubjects = [];
-    this.studentData = JSON.parse(localStorage.getItem("StudentData"));
+    this.studentData = JSON.parse(sessionStorage.getItem("StudentData"));
     this.studentData.subjects.map(function (subject) {
       if (subject.isSelected) {
         selectedSubjects.push(subject);

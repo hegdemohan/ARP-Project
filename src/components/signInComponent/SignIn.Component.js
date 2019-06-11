@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import "./SignIn.Component.css";
 import axios from "axios";
+import HeaderComponent from "../headerComponent/Header.Component";
 
 
 class SignInComponent extends Component {
-  login = "https://58d3d4b0.ngrok.io/api/Login"
-  studentRequestData = "https://58d3d4b0.ngrok.io/api/getStudentRequestData?type=all"
-  studentData = "https://58d3d4b0.ngrok.io/api/getStudentData/"
+  login = "https://dee35bf9.ngrok.io/api/Login"
+  studentRequestData = "https://dee35bf9.ngrok.io/api/getStudentRequestData?type=all"
+  studentData = "https://dee35bf9.ngrok.io/api/getStudentData/"
   signInObject = {};
   constructor(props) {
     super(props);
@@ -22,6 +23,15 @@ class SignInComponent extends Component {
     this.onChange = this.onChange.bind(this);
     this.moveToRegistration = this.moveToRegistration.bind(this);
   }
+
+  componentDidMount() {
+    if (sessionStorage.getItem("userLoggedin") && !sessionStorage.getItem("isAdmin")) {
+      this.props.history.push("/studentDetails/");
+    } else if (sessionStorage.getItem("userLoggedin") && sessionStorage.getItem("isAdmin")) {
+      this.props.history.push("/requests/");
+    }
+  }
+
   async signIn(e) {
     e.preventDefault();
     var loader = document.getElementById("loader");
@@ -38,8 +48,8 @@ class SignInComponent extends Component {
         },
       )
       .then(res => {
-        console.log(res);
         if (res.statusText != "No Content" && (res.data != undefined || res.data != "") && res.data.isAdmin) {
+          sessionStorage.setItem("isAdmin", res.data.isAdmin);
           axios
             .get(
               // "http://192.168.0.102:4005/api/getStudentRequestData?type=all"
@@ -48,12 +58,12 @@ class SignInComponent extends Component {
             .then(res => {
               loader.className = "";
               loader.firstChild.style.display = "none";
+              sessionStorage.setItem("userLoggedin", true);
               this.props.history.push("/requests/");
               // this.props.navigation.state.params.refresh();
             }).catch(error => {
               loader.className = "";
               loader.firstChild.style.display = "none";
-              console.log(error.response);
             });
         }
         else if (res.statusText != "No Content" && (res.data != undefined || res.data != "")) {
@@ -66,31 +76,28 @@ class SignInComponent extends Component {
             .then(resp => {
               loader.className = "";
               loader.firstChild.style.display = "none";
-              localStorage.setItem("StudentData", JSON.stringify(resp.data));
+              sessionStorage.setItem("StudentData", JSON.stringify(resp.data));
               if (resp.data.subjects.length === 0) {
-                console.log("newuser");
-                localStorage.setItem("newUser", "true");
+                sessionStorage.setItem("newUser", "true");
               }
               else {
-                localStorage.setItem("newUser", "false");
+                sessionStorage.setItem("newUser", "false");
               }
+              sessionStorage.setItem("userLoggedin", true);
+              var header = new HeaderComponent;
+              header.render();
               this.props.history.push("/studentDetails/");
               // this.props.navigation.state.params.refresh();
-
             });
         }
         else {
           loader.className = "";
           loader.firstChild.style.display = "none";
           this.setState({ errormsg: "Invalid Credentials" });
-          // this.state.errormsg = "Invalid Credentials";
-          console.log(this.state.errormsg);
-          console.log("no login");
         }
       }).catch(error => {
         loader.className = "";
         loader.firstChild.style.display = "none";
-        console.log(error.response);
       });
   }
 
@@ -148,9 +155,9 @@ class SignInComponent extends Component {
                     <div className="errormsgs">
                       {this.state.errormsg}
                     </div>
-                    <div className="mt-4">
+                    {/* <div className="mt-4">
                       <a className="anchor_tag">Forgot password?</a>
-                    </div>
+                    </div> */}
                     <hr className="my-4" />
                     <div>Haven't registered yet?</div>
                     <a className="anchor_tag" onClick={this.moveToRegistration}>

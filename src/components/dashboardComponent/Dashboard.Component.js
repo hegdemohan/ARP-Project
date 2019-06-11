@@ -9,7 +9,7 @@ import createReactClass from "create-react-class"
 class DashboardComponent extends Component {
   afterSelction = {}
   selectRowProp = {}
-  studentDataUrl = "https://58d3d4b0.ngrok.io/api/getStudentData/";
+  studentDataUrl = "https://dee35bf9.ngrok.io/api/getStudentData/";
   newUserDiv;
   loader;
   // updatedSubjects = [];
@@ -21,7 +21,9 @@ class DashboardComponent extends Component {
       items: "",
       data: "",
       apikey: "88731e0e5888957",
-      base64: ""
+      base64: "",
+      errorFileSize:"",
+      uploadedTranscript:false
     };
     this.init = this.init.bind(this);
     this.onFileChange = this.onFileChange.bind(this);
@@ -36,7 +38,11 @@ class DashboardComponent extends Component {
   }
 
   componentDidMount() {
-    this.init();
+    if(sessionStorage.getItem("userLoggedin")){
+      this.init();
+    }else{
+      this.props.history.push("/signin/");
+    }
   }
 
   onSelectAllRows(isSelect, rows) {
@@ -77,8 +83,9 @@ class DashboardComponent extends Component {
       // bgColor: this.bgColorRows
     };
     this.loader = document.getElementById("loader");
-    if (localStorage.getItem("newUser") == "false") {
-      var studentData = JSON.parse(localStorage.getItem("StudentData"));
+    if (sessionStorage.getItem("newUser") == "false") {
+      this.setState({uploadedTranscript:true});
+      var studentData = JSON.parse(sessionStorage.getItem("StudentData"));
       this.setState({ data: studentData.subjects });
 
       studentData.subjects.map((subject) => {
@@ -96,17 +103,24 @@ class DashboardComponent extends Component {
   }
 
   onFileChange(e, file) {
+    this.setState({errorFileSize: ""})
     var selectedFile = file || e.target.files[0];
     var fileReader = new FileReader();
-    const that = this;
-    // var base64;
-    fileReader.onload = function (fileLoadedEvent) {
-      that.setState({ base64: fileLoadedEvent.target.result })
-      // Print data in console
-      console.log(that.state.base64);
-    };
-    fileReader.readAsDataURL(selectedFile);
-    this.setState({ fileName: e.target.files[0].name });
+    if(selectedFile){
+      if(selectedFile.size < 1000000){
+        const that = this;
+        // var base64;
+        fileReader.onload = function (fileLoadedEvent) {
+          that.setState({ base64: fileLoadedEvent.target.result })
+          // Print data in console
+          console.log(that.state.base64);
+        };
+        fileReader.readAsDataURL(selectedFile);
+        this.setState({ fileName: e.target.files[0].name });
+      }else{
+        this.setState({errorFileSize: "Maximum file size allowed is 1MB. Please reduce the file size and try again."})
+      }
+    }
   }
 
   submit() {
@@ -120,14 +134,14 @@ class DashboardComponent extends Component {
     });
 
     if (selectedAtLeastOne) {
-      var studentData = JSON.parse(localStorage.getItem('StudentData'));
+      var studentData = JSON.parse(sessionStorage.getItem('StudentData'));
       var data = {
         "firstName": studentData.firstName,
         "lastName": studentData.lastName,
         "matriculationNumber": studentData.matriculationNumber,
         "studentID": studentData.studentID,
         "subjects": this.state.data,
-        "isUpdate": localStorage.getItem("newUser") == "true" ? false : true,
+        "isUpdate": sessionStorage.getItem("newUser") == "true" ? false : true,
         "transcript": {
           "fileData": this.state.base64,
           "fileName": this.state.fileName
@@ -135,11 +149,11 @@ class DashboardComponent extends Component {
       }
       axios
         .post(
-          "https://58d3d4b0.ngrok.io/api/saveStudentData", data
+          "https://dee35bf9.ngrok.io/api/saveStudentData", data
         )
         .then(res => {
 
-          localStorage.setItem("newUser", "false");
+          sessionStorage.setItem("newUser", "false");
           axios
             .get(
               // "http://192.168.0.102:4005/api/getStudentData/" + res.data.studentID
@@ -148,11 +162,11 @@ class DashboardComponent extends Component {
             .then(resp => {
               this.loader.className = "";
               this.loader.firstChild.style.display = "none";
-              localStorage.setItem("StudentData", JSON.stringify(resp.data));
+              sessionStorage.setItem("StudentData", JSON.stringify(resp.data));
               if (resp.data.subjects.length == 0) {
-                localStorage.setItem("newUser", "true");
+                sessionStorage.setItem("newUser", "true");
               } else {
-                localStorage.setItem("newUser", "false");
+                sessionStorage.setItem("newUser", "false");
               }
               this.props.history.push("/studentDetails/");
             });
@@ -162,28 +176,6 @@ class DashboardComponent extends Component {
       alert("Select at least one subject!");
     }
   }
-
-  // colFormatter = (cell, row) => {
-  //   this.adminStatus = row;
-  //   console.log(this.adminStatus);
-  //   if ((this.adminStatus.isSelected) && (this.adminStatus.isRejectedByAdmin)) {
-  //     console.log("rejected");
-  //     return (
-  //       <div className="reject">
-  //         REJECTED
-  //       </div>
-  //     )
-  //   }
-  //   else if ((this.adminStatus.isSelected) && !(this.adminStatus.isRejectedByAdmin)) {
-  //     console.log("approved");
-  //     return (
-  //       <div className="approve">
-  //         APPROVED
-  //       </div>
-  //     )
-  //   }
-
-  // }
 
   renderTable(data) {
     var Table = createReactClass({
@@ -202,6 +194,8 @@ class DashboardComponent extends Component {
 
   upload() {
     if (this.state.base64) {
+      this.setState({uploadedTranscript: true});
+      this.setState({errorFileSize: ""});
       this.loader.className = "fullScreen";
       this.loader.firstChild.style.display = "inline-block";
       // console.log(this.state.base64);
@@ -215,26 +209,15 @@ class DashboardComponent extends Component {
           console.log(res.data);
           axios
             .post(
-              "http://16a3c8f4.ngrok.io/api/v1/extractDataFromOcr", res.data
+              "http://b758b130.ngrok.io/api/v1/extractDataFromOcr", res.data
             )
             .then(resp => {
-              console.log(resp.data, "base64");
-              this.loader.className = "";
-              this.loader.firstChild.style.display = "none";
+              this.getSubjects();
             })
         })
-      this.getSubjects();
     }
     else {
-      console.log("no upload");
-      // return (
-      //   <div className="errormsgs my-3">
-
-      //     Please upload your Transcript!
-      //   </div>
-      // )
     }
-    //Send the document to API
   }
 
   pdfDownload() {
@@ -256,11 +239,9 @@ class DashboardComponent extends Component {
   }
 
   getSubjects() {
-    this.loader.className = "fullScreen";
-    this.loader.firstChild.style.display = "inline-block";
     axios
       .get(
-        "https://58d3d4b0.ngrok.io/api/Subject/getSubjects"
+        "https://dee35bf9.ngrok.io/api/Subject/getSubjects"
         // this.studentRequestData
       )
       .then(res => {
@@ -273,10 +254,8 @@ class DashboardComponent extends Component {
           // this.updatedSubjects.push(subject);
           if (subject.isSelected) {
             this.selectRowProp.selected.push(subject.module);
-            // console.log(this.selectRowProp.selected)
           }
         });
-        // console.log(this.selectRowProp)
       });
   }
 
@@ -292,7 +271,7 @@ class DashboardComponent extends Component {
             <div className="card row my-5">
               <div className="card-body">
                 <div className="container">
-                  <IsNewUSer onFileChange={this.onFileChange} fileName={this.state.fileName} upload={this.upload} />
+                  <IsNewUSer onFileChange={this.onFileChange} errorFileSize={this.state.errorFileSize} fileName={this.state.fileName} upload={this.upload} />
                   <hr className="my-4" />
                   <div>
                     <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.state.data}>
@@ -303,10 +282,10 @@ class DashboardComponent extends Component {
                     <hr className="my-4" />
                     <div className="row">
                       <div className="col-6">
-                        <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.submit}>Submit</button>
+                        <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.state.uploadedTranscript} onClick={this.submit}>Submit</button>
                       </div>
                       <div className="col-6">
-                        <button className="btn btn-lg btn-secondary btn-block text-uppercase" type="submit" onClick={this.pdfDownload}>Download PDF</button>
+                        <button className="btn btn-lg btn-secondary btn-block text-uppercase" type="submit" disabled={!this.state.uploadedTranscript} onClick={this.pdfDownload}>Download PDF</button>
                       </div>
                     </div>
                   </div>
@@ -314,7 +293,7 @@ class DashboardComponent extends Component {
               </div>
             </div>
           </div>
-          <div className="pdfPrint hidden">
+          <div className="pdfPrint">
           </div>
         </div>
       </div>
@@ -324,23 +303,41 @@ class DashboardComponent extends Component {
 
 function PdfContent(props) {
   var subjectsSelected = [];
+  var studentData = JSON.parse(sessionStorage.getItem('StudentData'));
   if (props.data != "") {
     props.data.map((subject) => {
       if (subject.isSelected) {
-        subjectsSelected.push(subject);
+        subjectsSelected.push(
+          <tr>
+            <th scope="row">{subject.module}</th>
+            <td>{subject.subjectName}</td>
+          </tr>
+        )
       }
     });
   }
   return (
-    <BootstrapTable version='4' className="table table-striped" data={subjectsSelected}>
-      <TableHeaderColumn isKey dataField="subjectID" dataAlign="center">Subject ID</TableHeaderColumn>
-      <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
-    </BootstrapTable>
+    <div>
+      <div>First Name : {studentData.firstName}</div>
+      <div>Last Name : {studentData.lastName}</div>
+      <div>Matriculation Number : {studentData.matriculationNumber}</div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Module</th>
+            <th scope="col">Subject Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {subjectsSelected}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
 function IsNewUSer(props) {
-  if (localStorage.getItem("newUser") == "true") {
+  if (sessionStorage.getItem("newUser") == "true") {
     return (
       <div>
         <h4>Upload Transcript in PDF format</h4>
@@ -351,6 +348,7 @@ function IsNewUSer(props) {
           </span>
           <input type="text" value={props.fileName} className="form-control" readOnly />
         </div>
+        <div className="errormsgs">{props.errorFileSize}</div>
         <button className="btn btn-lg btn-primary my-4" type="submit" onClick={props.upload}>Upload</button>
       </div>
     );
