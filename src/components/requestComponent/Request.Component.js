@@ -5,6 +5,8 @@ import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import { Route } from "react-router-dom";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import "react-tabs/style/react-tabs.css";
+import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
+
 
 class RequestComponent extends Component {
   studentSub = {};
@@ -14,7 +16,7 @@ class RequestComponent extends Component {
       allStudentObj: "",
       pendStudentObj: "",
       apprStudentObj: "",
-      tabIndex: 1
+      tabIndex: 0
     };
 
     this.manageSubs = this.manageSubs.bind(this);
@@ -22,31 +24,41 @@ class RequestComponent extends Component {
   }
 
   componentDidMount() {
-    if (sessionStorage.getItem("userLoggedin")) {
-      axios
-        .get("https://4c3b3834.ngrok.io/api/getStudentRequestData?type=all")
-        .then(res => {
-          this.setState({
-            allStudentObj: [...this.state.allStudentObj, ...res.data]
-          });
+    // if (sessionStorage.getItem("userLoggedin")) {
+    var loader = document.getElementById("loader");
+    loader.className = "fullScreen";
+    loader.firstChild.style.display = "inline-block";
+    axios
+      .get("http://b5560796.ngrok.io/api/getStudentRequestData?type=all")
+      .then(res => {
+        this.setState({
+          allStudentObj: [...this.state.allStudentObj, ...res.data]
         });
-      axios
-        .get("https://4c3b3834.ngrok.io/api/getStudentRequestData?type=pending")
-        .then(res => {
-          this.setState({
-            pendStudentObj: [...this.state.pendStudentObj, ...res.data]
-          });
+        loader.className = "";
+        loader.firstChild.style.display = "none";
+      })
+      .catch(error => {
+        ToastsStore.info("Please check your Internet Connection!");
+        loader.className = "";
+        loader.firstChild.style.display = "none";
+      });
+    axios
+      .get("http://b5560796.ngrok.io/api/getStudentRequestData?type=pending")
+      .then(res => {
+        this.setState({
+          pendStudentObj: [...this.state.pendStudentObj, ...res.data]
         });
-      axios
-        .get("https://4c3b3834.ngrok.io/api/getStudentRequestData?type=approved")
-        .then(res => {
-          this.setState({
-            apprStudentObj: [...this.state.apprStudentObj, ...res.data]
-          });
+      });
+    axios
+      .get("http://b5560796.ngrok.io/api/getStudentRequestData?type=approved")
+      .then(res => {
+        this.setState({
+          apprStudentObj: [...this.state.apprStudentObj, ...res.data]
         });
-    } else {
-      this.props.history.push("/signin/");
-    }
+      });
+    // } else {
+    //   this.props.history.push("/signin/");
+    // }
   }
 
   colFormatter = (cell, row) => {
@@ -59,21 +71,44 @@ class RequestComponent extends Component {
             loader.firstChild.style.display = "inline-block";
             e.preventDefault();
             this.studentSub = row;
-            console.log(this.studentSub);
             sessionStorage.setItem("UserDetail", JSON.stringify(row));
             axios
               .get(
-                "https://4c3b3834.ngrok.io/api/getStudentData/" + row.studentID
+                "http://b5560796.ngrok.io/api/getStudentData/" + row.studentID
 
               )
               .then(resp => {
                 loader.className = "";
                 loader.firstChild.style.display = "none";
-                console.log("Success request");
                 sessionStorage.setItem("StudentRequestData", JSON.stringify(resp.data));
-                history.push("/StudentRequest/")
+                history.push("/studentRequest/");
 
+              })
+              .catch(error => {
+                ToastsStore.info("Please try again!");
+                loader.className = "";
+                loader.firstChild.style.display = "none";
               });
+          }}>
+          <i className="fa fa-angle-double-right"></i>
+        </a>
+
+      )}
+      />
+    )
+  }
+  approveColFormatter = (cell, row) => {
+    return (
+      <Route render={({ history }) => (
+        <a href="#" style={{ cursor: 'pointer' }}
+          onClick={(e) => {
+            var loader = document.getElementById("loader");
+            loader.className = "fullScreen";
+            loader.firstChild.style.display = "inline-block";
+            e.preventDefault();
+            this.studentSub = row;
+            sessionStorage.setItem("approvedData", JSON.stringify(row));
+            history.push("/approved/");
           }}>
           <i className="fa fa-angle-double-right"></i>
         </a>
@@ -120,7 +155,7 @@ class RequestComponent extends Component {
                   </TabPanel>
                   <TabPanel>
                     <div className="container req">
-                      <ApprovedComponent data={this.state.apprStudentObj} />
+                      <ApprovedComponent data={this.state.apprStudentObj} colFormatter={this.approveColFormatter} />
                     </div>
                   </TabPanel>
                 </Tabs>
@@ -137,10 +172,10 @@ function PendingRequestComponent(props) {
   return (
     <div>
       <BootstrapTable className="table table-striped" data={props.data}>
-        <TableHeaderColumn isKey dataField="matriculationNumber" dataAlign="center">Matriculation Number</TableHeaderColumn>
-        <TableHeaderColumn dataField="firstName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">FirstName</TableHeaderColumn>
-        <TableHeaderColumn dataField="lastName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">LastName</TableHeaderColumn>
-        <TableHeaderColumn width={'180'} dataField='id' dataFormat={props.colFormatter} dataAlign="center">Link</TableHeaderColumn>
+        <TableHeaderColumn isKey dataField="matriculationNumber" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">Matriculation Number</TableHeaderColumn>
+        <TableHeaderColumn dataField="firstName" dataAlign="center">FirstName</TableHeaderColumn>
+        <TableHeaderColumn dataField="lastName" dataAlign="center">LastName</TableHeaderColumn>
+        <TableHeaderColumn width={'120'} dataField='id' dataFormat={props.colFormatter} dataAlign="center">Link</TableHeaderColumn>
       </BootstrapTable>
     </div>
   );
@@ -149,9 +184,9 @@ function AllComponent(props) {
   return (
     <div>
       <BootstrapTable className="table table-striped" data={props.data}>
-        <TableHeaderColumn isKey dataField="matriculationNumber" dataAlign="center">Matriculation Number</TableHeaderColumn>
-        <TableHeaderColumn dataField="firstName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">FirstName</TableHeaderColumn>
-        <TableHeaderColumn dataField="lastName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">LastName</TableHeaderColumn>
+        <TableHeaderColumn isKey dataField="matriculationNumber" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">Matriculation Number</TableHeaderColumn>
+        <TableHeaderColumn dataField="firstName" dataAlign="center">FirstName</TableHeaderColumn>
+        <TableHeaderColumn dataField="lastName" dataAlign="center">LastName</TableHeaderColumn>
         {/* <TableHeaderColumn width={'180'} dataField='id' dataFormat={props.colFormatter} dataAlign="center">Link</TableHeaderColumn> */}
       </BootstrapTable>
     </div>
@@ -162,10 +197,10 @@ function ApprovedComponent(props) {
   return (
     <div>
       <BootstrapTable className="table table-striped" data={props.data}>
-        <TableHeaderColumn isKey dataField="matriculationNumber" dataAlign="center">Matriculation Number</TableHeaderColumn>
-        <TableHeaderColumn dataField="firstName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">FirstName</TableHeaderColumn>
-        <TableHeaderColumn dataField="lastName" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">LastName</TableHeaderColumn>
-        {/* <TableHeaderColumn width={'180'} dataField='id' dataFormat={props.colFormatter} dataAlign="center">Link</TableHeaderColumn> */}
+        <TableHeaderColumn isKey dataField="matriculationNumber" filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">Matriculation Number</TableHeaderColumn>
+        <TableHeaderColumn dataField="firstName" dataAlign="center">FirstName</TableHeaderColumn>
+        <TableHeaderColumn dataField="lastName" dataAlign="center">LastName</TableHeaderColumn>
+        <TableHeaderColumn width={'120'} dataField='id' dataFormat={props.colFormatter} dataAlign="center">Link</TableHeaderColumn>
       </BootstrapTable>
     </div>
   );

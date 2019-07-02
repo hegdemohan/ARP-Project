@@ -26,11 +26,11 @@ class StudentDetails extends Component {
     }
 
     navigate(buttonClicked) {
-        if (buttonClicked == "statusCheck") {
+        if (buttonClicked === "statusCheck") {
             this.props.history.push("/checkStatus/");
             return;
         }
-        else if (buttonClicked == "new") {
+        else if (buttonClicked === "new") {
             this.props.history.push("/dashboard/");
         } else {
             this.props.history.push("/dashboard/");
@@ -42,10 +42,10 @@ class StudentDetails extends Component {
         var data = JSON.parse(sessionStorage.getItem("userData"));
         var newUser = sessionStorage.getItem("newUser");
         this.setState({ userDetailsObject: data });
-        if (newUser == "true") {
-            this.state.newUser = true;
+        if (newUser === "true") {
+            this.setState({ newUser: true });
         } else {
-            this.state.newUser = false;
+            this.setState({ newUser: false });
         }
     }
 
@@ -56,12 +56,12 @@ class StudentDetails extends Component {
                     <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
                         <div className="card card-signin my-5">
                             <div className="card-body">
-                                <h3 className="card-title text-center">Student Details</h3>
+                                <h3 className="card-title text-center"><b>Student Details</b></h3>
                                 <hr className="my-4"></hr>
                                 <div className="row">
-                                    <div className="col-6">First Name:</div><div className="col-6">{this.state.userDetailsObject.firstName}</div>
-                                    <div className="col-6">Last Name:</div><div className="col-6">{this.state.userDetailsObject.lastName}</div>
-                                    <div className="col-6">Matriculation Number:</div><div className="col-6">{this.state.userDetailsObject.matriculationNumber}</div>
+                                    <div className="col-6"><b>First Name:</b></div><div className="col-6">{this.state.userDetailsObject.firstName}</div>
+                                    <div className="col-6"><b>Last Name:</b></div><div className="col-6">{this.state.userDetailsObject.lastName}</div>
+                                    <div className="col-6"><b>Matriculation Number:</b></div><div className="col-6">{this.state.userDetailsObject.matriculationNumber}</div>
                                 </div>
                                 <span>{!this.state.newUser}</span>
                                 <hr className="my-4"></hr>

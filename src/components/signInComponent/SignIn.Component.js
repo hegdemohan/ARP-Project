@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import "./SignIn.Component.css";
 import axios from "axios";
-
+import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
 
 class SignInComponent extends Component {
-  login = "https://4c3b3834.ngrok.io/api/Login"
-  studentRequestData = "https://4c3b3834.ngrok.io/api/getStudentRequestData?type=all"
-  studentData = "https://4c3b3834.ngrok.io/api/getStudentData/"
+  login = "http://b5560796.ngrok.io/api/Login"
+  studentRequestData = "http://b5560796.ngrok.io/api/getStudentRequestData?type=all"
+  studentData = "http://b5560796.ngrok.io/api/getStudentData/"
   signInObject = {};
   constructor(props) {
     super(props);
@@ -15,13 +15,15 @@ class SignInComponent extends Component {
       passWord: "",
       responseObject: "",
       errormsg: ""
-
     };
 
     this.signIn = this.signIn.bind(this);
     this.onChange = this.onChange.bind(this);
     this.moveToRegistration = this.moveToRegistration.bind(this);
   }
+
+
+
 
   componentDidMount() {
     if (sessionStorage.getItem("userLoggedin") && !sessionStorage.getItem("isAdmin")) {
@@ -33,69 +35,82 @@ class SignInComponent extends Component {
 
   async signIn(e) {
     e.preventDefault();
-    var loader = document.getElementById("loader");
-    loader.className = "fullScreen";
-    loader.firstChild.style.display = "inline-block";
+    if (this.state.email !== "" && this.state.passWord !== "") {
+      var loader = document.getElementById("loader");
+      loader.className = "fullScreen";
+      loader.firstChild.style.display = "inline-block";
 
-    await axios
-      .post(
-        this.login,
-        {
-          email: this.state.email,
-          password: this.state.passWord
-        },
-      )
-      .then(res => {
-        if (res.statusText != "No Content" && (res.data != undefined || res.data != "") && res.data.isAdmin) {
-          sessionStorage.setItem("isAdmin", res.data.isAdmin);
-          axios
-            .get(
-              this.studentRequestData
-            )
-            .then(res => {
-              loader.className = "";
-              loader.firstChild.style.display = "none";
-              sessionStorage.setItem("userLoggedin", true);
-              sessionStorage.setItem("userData", JSON.stringify(res.data));
-              window.location.href = "/requests/";
-            }).catch(error => {
-              loader.className = "";
-              loader.firstChild.style.display = "none";
-            });
-        }
-        else if (res.statusText != "No Content" && (res.data != undefined || res.data != "")) {
-          axios
-            .get(
-              this.studentData + res.data.studentID
+      await axios
+        .post(
+          this.login,
+          {
+            email: this.state.email,
+            password: this.state.passWord
+          },
+        )
+        .then(res => {
+          if (res.statusText !== "No Content" && (res.data !== undefined || res.data !== "") && res.data.isAdmin) {
+            sessionStorage.setItem("isAdmin", res.data.isAdmin);
+            axios
+              .get(
+                this.studentRequestData
+              )
+              .then(res => {
+                ToastsStore.success("You're now Logged In!");
+                loader.className = "";
+                loader.firstChild.style.display = "none";
+                sessionStorage.setItem("userLoggedin", true);
+                sessionStorage.setItem("userData", JSON.stringify(res.data));
+                window.setTimeout(function () {
+                  window.location.href = "/requests/";
+                }, 1000);
+              }).catch(error => {
+                loader.className = "";
+                loader.firstChild.style.display = "none";
+              });
+          }
+          else if (res.statusText !== "No Content" && (res.data !== undefined || res.data !== "")) {
+            axios
+              .get(
+                this.studentData + res.data.studentID
 
-            )
-            .then(resp => {
-              loader.className = "";
-              loader.firstChild.style.display = "none";
-              sessionStorage.setItem("userData", JSON.stringify(resp.data));
-              if (resp.data.subjects.length === 0) {
-                sessionStorage.setItem("newUser", "true");
-              }
-              else {
-                sessionStorage.setItem("newUser", "false");
-              }
-              sessionStorage.setItem("userLoggedin", true);
-              window.location.href = '/studentDetails/';
-            });
-        }
-        else {
+              )
+              .then(resp => {
+                ToastsStore.success("You're now Logged In!");
+                loader.className = "";
+                loader.firstChild.style.display = "none";
+                sessionStorage.setItem("userData", JSON.stringify(resp.data));
+                if (resp.data.subjects.length === 0) {
+                  sessionStorage.setItem("newUser", "true");
+                }
+                else {
+                  sessionStorage.setItem("newUser", "false");
+                }
+                sessionStorage.setItem("userLoggedin", true);
+                window.setTimeout(function () {
+                  window.location.href = '/studentDetails/';
+                }, 1000);
+              });
+          }
+          else {
+            ToastsStore.warning("Invalid Credentials!");
+            loader.className = "";
+            loader.firstChild.style.display = "none";
+            document.getElementById("signin").reset();
+          }
+        }).catch(error => {
+          ToastsStore.info("Please check your Internet Connection!");
           loader.className = "";
           loader.firstChild.style.display = "none";
-          this.setState({ errormsg: "Invalid Credentials" });
-        }
-      }).catch(error => {
-        loader.className = "";
-        loader.firstChild.style.display = "none";
-      });
+        });
+    }
+    else {
+      ToastsStore.info("Please enter credentials!");
+    }
   }
 
   moveToRegistration() {
-    this.props.history.push("/Registration/");
+    this.props.history.push("/registration/");
   }
 
   onChange(e) {
@@ -114,7 +129,7 @@ class SignInComponent extends Component {
               <div className="card card-signin my-5">
                 <div className="card-body">
                   <h5 className="card-title text-center">Sign In</h5>
-                  <form className="form-signin">
+                  <form className="form-signin" id="signin">
                     <div className="form-label-group">
                       <input
                         type="email"
@@ -145,6 +160,7 @@ class SignInComponent extends Component {
                     >
                       Sign in
                   </button>
+                    <ToastsContainer position={ToastsContainerPosition.BOTTOM_CENTER} store={ToastsStore} />
                     <div className="errormsgs">
                       {this.state.errormsg}
                     </div>

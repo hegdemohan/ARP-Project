@@ -25,11 +25,6 @@ input[readonly] {
   visibility: hidden;
   position: fixed;
 }
-
-.reject {
-  color: red;
-}
-
-.approve {
-  color: green;
+#hiddenSub {
+  display: none;
 }

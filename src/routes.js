@@ -8,6 +8,7 @@ import Registration from "./components/registrationComponent/Registration.Compon
 import StudentRequest from "./components/studentRequestComponent/StudentRequest.Component";
 import EditSubject from "./components/editSubjectComponent/EditSubject.Component";
 import CheckStatus from "./components/checkStatusComponent/CheckStatus.Component"
+import ApprovedComponent from "./components/approvedComponent/Approved.Component";
 
 class Router extends Component {
   state = {};
@@ -20,11 +21,12 @@ class Router extends Component {
             <Route exact path="/signin/" component={SignInComponent} />
             <Route path="/studentDetails/" component={StudentDetails} />
             <Route path="/dashboard/" component={DashboardComponent} />
-            <Route path="/Registration/" component={Registration} />
+            <Route path="/registration/" component={Registration} />
             <Route path="/requests/" component={RequestComponent} />
-            <Route path={"/StudentRequest/"} component={StudentRequest} />
+            <Route path={"/studentRequest/"} component={StudentRequest} />
             <Route path={"/editSubjects/"} component={EditSubject} />
             <Route path={"/checkStatus/"} component={CheckStatus} />
+            <Route path={"/approved/"} component={ApprovedComponent} />
           </Switch>
         </BrowserRouter>
       </div>

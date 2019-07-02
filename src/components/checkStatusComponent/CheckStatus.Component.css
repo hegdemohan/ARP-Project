@@ -1,0 +1,12 @@
+.reject {
+  color: red;
+}
+.approve {
+  color: green;
+}
+.pending {
+  color: blue;
+}
+.PDFbtn {
+  margin-left: 890px;
+}

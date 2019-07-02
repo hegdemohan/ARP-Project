@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import './StudentRequest.Component.css';
 import axios from 'axios';
+import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
 
 class StudentRequest extends Component {
     StudentData;
@@ -29,11 +30,12 @@ class StudentRequest extends Component {
             this.selectRowProp = {
                 mode: 'checkbox',
                 selected: [],
-                onSelect: this.handleRowSelect
+                onSelect: this.handleRowSelect,
+                unselectable: []
+
             };
             this.Data = JSON.parse(sessionStorage.getItem("StudentRequestData"));
             this.transcriptData = JSON.parse(this.Data.transcript.ocrJson);
-            console.log((this.transcriptData));
             this.StudentData = JSON.parse(sessionStorage.getItem("UserDetail"));
             this.setState({ data: this.StudentData });
             this.dataSubs = this.StudentData.subjects;
@@ -50,6 +52,12 @@ class StudentRequest extends Component {
                 this.selectedSubjects.push(subject);
 
             }
+            if (subject.isSelected && subject.isRejectedByAdmin && subject.isDecided) {
+                this.selectRowProp.unselectable.push(subject.module);
+            }
+            if (subject.isSelected && subject.isDecided) {
+                this.selectRowProp.unselectable.push(subject.module);
+            }
         });
     }
 
@@ -57,7 +65,6 @@ class StudentRequest extends Component {
         for (let i = 0; i < this.dataSubs.length; i++) {
             if (this.dataSubs[i].subjectID === row.subjectID) {
                 this.dataSubs[i].isSelected = isSelected;
-                console.log(this.dataSubs[i]);
             }
         }
         this.dataSubs.map((subject) => {
@@ -65,16 +72,13 @@ class StudentRequest extends Component {
                 if (!(subject.isSelected)) {
                     subject.isSelected = true;
                     subject.isRejectedByAdmin = true;
-                    console.log(subject, "false");
                 }
                 else {
                     subject.isSelected = true;
                     subject.isRejectedByAdmin = false;
-                    console.log(subject, "true");
                 }
             }
         });
-        console.log(this.dataSubs);
 
     }
     transcript() {
@@ -107,18 +111,27 @@ class StudentRequest extends Component {
         }
         axios
             .post(
-                "https://4c3b3834.ngrok.io/api/approveLearningAgreement", postData
+                "http://b5560796.ngrok.io/api/approveLearningAgreement", postData
             )
             .then(res => {
+                ToastsStore.success("Approved!");
                 loader.className = "";
                 loader.firstChild.style.display = "none";
-                this.props.history.push("/requests/");
+                window.setTimeout(function () {
+                    window.location.href = "/requests/";
+                }, 1000);
+            })
+            .catch(error => {
+                ToastsStore.info("Please check your Internet Connection!");
+                loader.className = "";
+                loader.firstChild.style.display = "none";
             });
     }
     render() {
 
         return (
             <div>
+                <ToastsContainer position={ToastsContainerPosition.BOTTOM_CENTER} store={ToastsStore} />
                 <div id="loader">
                     <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                 </div>
@@ -127,9 +140,9 @@ class StudentRequest extends Component {
                         <div className="col-12 mx-auto">
                             <div className="card my-5">
                                 <div className="card-body">
-                                    <h2 className="card-title text-center">Student Details</h2>
+                                    <h3 className="card-title text-center"><b>Student Details</b></h3>
                                     <hr className="my-6"></hr>
-                                    <button className="btn btn-primary my-3 trans_btn" onClick={this.transcript}>Download Transcript</button>
+                                    <button className="btn btn-info my-3 trans_btn" onClick={this.transcript}>Download Transcript</button>
                                     <div className="input_data">
                                         <div><b>First Name: </b>{this.state.data.firstName}</div>
                                         <div><b>Last Name: </b>{this.state.data.lastName}</div>
@@ -140,7 +153,7 @@ class StudentRequest extends Component {
                                             <h4 className="col-12 my-3">Requested Subjects</h4>
                                             <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.selectedSubjects}>
                                                 <TableHeaderColumn isKey dataField="module" dataAlign="center">Subject ID</TableHeaderColumn>
-                                                <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
+                                                <TableHeaderColumn width={"60%"} dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
                                             </BootstrapTable>
                                         </div>
                                         <div className="col-6">

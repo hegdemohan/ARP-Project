@@ -7,6 +7,7 @@ import "../node_modules/jquery/dist/jquery.min.js";
 import HeaderComponent from "./components/headerComponent/Header.Component";
 import Router from "./routes";
 
+
 function App() {
   return (
     <div className="App">

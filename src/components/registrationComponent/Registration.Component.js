@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import './Registration.Component.css'
 import axios from "axios";
+import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
 
 class Registration extends Component {
     constructor(props) {
@@ -37,7 +38,7 @@ class Registration extends Component {
             loader.firstChild.style.display = "inline-block";
             await axios
                 .post(
-                    "https://4c3b3834.ngrok.io/api/register",
+                    "http://b5560796.ngrok.io/api/register",
                     {
                         firstName: this.state.firstName,
                         lastName: this.state.lastName,
@@ -49,14 +50,20 @@ class Registration extends Component {
                     },
                 )
                 .then(res => {
+                    ToastsStore.success("Successfully Registered!");
                     loader.className = "";
                     loader.firstChild.style.display = "none";
-                    this.props.history.push("/signin/");
+                    window.setTimeout(function () {
+                        window.location.href = '/signin/';
+                    }, 1000);
                 })
                 .catch(error => {
                     loader.className = "";
                     loader.firstChild.style.display = "none";
-                    if (error.response.status == 409) {
+                    if (error.response === undefined) {
+                        ToastsStore.info("Please check your Internet Connection!");
+                    }
+                    else if (error.response.status === 409) {
                         this.setState(prevState => ({
                             errorData: {
                                 ...prevState.errorData,
@@ -69,16 +76,18 @@ class Registration extends Component {
     }
 
     validData() {
-        this.state.errorData = {
-            errorFirstName: "",
-            errorLastName: "",
-            errorMatrNum: "",
-            errorEmail: "",
-            errorPassword: "",
-            errorUserExist: ""
-        }
+        this.setState({
+            errorData: {
+                errorFirstName: "",
+                errorLastName: "",
+                errorMatrNum: "",
+                errorEmail: "",
+                errorPassword: "",
+                errorUserExist: ""
+            }
+        })
         var isValid = true;
-        if (this.state.firstName == "" || this.state.firstName == undefined) {
+        if (this.state.firstName === "" || this.state.firstName === undefined) {
             this.setState(prevState => ({
                 errorData: {
                     ...prevState.errorData,
@@ -87,7 +96,7 @@ class Registration extends Component {
             }))
             isValid = false;
         }
-        if (this.state.lastName == "" || this.state.lastName == undefined) {
+        if (this.state.lastName === "" || this.state.lastName === undefined) {
             this.setState(prevState => ({
                 errorData: {
                     ...prevState.errorData,
@@ -96,7 +105,7 @@ class Registration extends Component {
             }))
             isValid = false;
         }
-        if (this.state.matriculationNumber == "" || this.state.matriculationNumber == undefined) {
+        if (this.state.matriculationNumber === "" || this.state.matriculationNumber === undefined) {
             this.setState(prevState => ({
                 errorData: {
                     ...prevState.errorData,
@@ -105,7 +114,7 @@ class Registration extends Component {
             }))
             isValid = false;
         }
-        if (this.state.loginDetails.email == "" || this.state.loginDetails.email == undefined || !/\S+@\S+\.\S+/.test(this.state.loginDetails.email)) {
+        if (this.state.loginDetails.email === "" || this.state.loginDetails.email === undefined || !/\S+@\S+\.\S+/.test(this.state.loginDetails.email)) {
             this.setState(prevState => ({
                 errorData: {
                     ...prevState.errorData,
@@ -114,7 +123,7 @@ class Registration extends Component {
             }))
             isValid = false;
         }
-        if (this.state.loginDetails.password == "" || this.state.loginDetails.password == undefined) {
+        if (this.state.loginDetails.password === "" || this.state.loginDetails.password === undefined) {
             this.setState(prevState => ({
                 errorData: {
                     ...prevState.errorData,
@@ -136,7 +145,7 @@ class Registration extends Component {
 
     onChange(e) {
         const that = e.target.value;
-        if (e.target.id == "email") {
+        if (e.target.id === "email") {
             this.setState(prevState => ({
                 loginDetails: {
                     ...prevState.loginDetails,
@@ -148,7 +157,7 @@ class Registration extends Component {
                 }
             })
         }
-        else if (e.target.id == "password") {
+        else if (e.target.id === "password") {
             this.setState(prevState => ({
                 loginDetails: {
                     ...prevState.loginDetails,
@@ -222,6 +231,8 @@ class Registration extends Component {
                                             {this.state.errorData.errorPassword}
                                         </div>
                                         <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" onClick={this.register}>Register</button>
+                                        {/* <ToastContainer  /> */}
+                                        <ToastsContainer position={ToastsContainerPosition.BOTTOM_CENTER} store={ToastsStore} />
                                         <div className="errormsg my-3">
                                             {this.state.errorData.errorUserExist}
                                         </div>

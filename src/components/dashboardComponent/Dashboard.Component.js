@@ -3,16 +3,19 @@ import "./Dashboard.Component.css";
 import { BootstrapTable, TableHeaderColumn } from "react-bootstrap-table";
 import axios from "axios";
 import ReactDOM from 'react-dom';
-import jsPDF from "jspdf"
-import createReactClass from "create-react-class"
+import jsPDF from "jspdf";
+import createReactClass from "create-react-class";
+import Modal from 'react-awesome-modal';
+import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
+
 
 class DashboardComponent extends Component {
   afterSelction = {}
   selectRowProp = {}
-  studentDataUrl = "https://4c3b3834.ngrok.io/api/getStudentData/";
+  studentDataUrl = "http://b5560796.ngrok.io/api/getStudentData/";
   newUserDiv;
   loader;
-  // updatedSubjects = [];
+  temp = [];
   constructor(props) {
     super(props);
     this.state = {
@@ -22,9 +25,11 @@ class DashboardComponent extends Component {
       data: "",
       apikey: "88731e0e5888957",
       base64: "",
-      JsonData: [],
+      JsonData: "",
       errorFileSize: "",
-      uploadedTranscript: false
+      errorFile: "",
+      uploadedTranscript: false,
+      visible: false,
     };
     this.init = this.init.bind(this);
     this.onFileChange = this.onFileChange.bind(this);
@@ -35,6 +40,9 @@ class DashboardComponent extends Component {
     this.renderTable = this.renderTable.bind(this);
     this.getSubjects = this.getSubjects.bind(this);
     this.pdfDownload = this.pdfDownload.bind(this);
+    this.closeSubModal = this.closeSubModal.bind(this);
+    this.closeSubModal1 = this.closeSubModal1.bind(this);
+
 
   }
 
@@ -70,7 +78,8 @@ class DashboardComponent extends Component {
       unselectable: []
     };
     this.loader = document.getElementById("loader");
-    if (sessionStorage.getItem("newUser") == "false") {
+    if (sessionStorage.getItem("newUser") === "false") {
+      document.getElementById("hiddenSub").style.display = "block";
       this.setState({ uploadedTranscript: true });
       var studentData = JSON.parse(sessionStorage.getItem("userData"));
       this.setState({ data: studentData.subjects });
@@ -97,7 +106,6 @@ class DashboardComponent extends Component {
         const that = this;
         fileReader.onload = function (fileLoadedEvent) {
           that.setState({ base64: fileLoadedEvent.target.result })
-          console.log(that.state.base64);
         };
         fileReader.readAsDataURL(selectedFile);
         this.setState({ fileName: e.target.files[0].name });
@@ -125,7 +133,7 @@ class DashboardComponent extends Component {
         "matriculationNumber": studentData.matriculationNumber,
         "studentID": studentData.studentID,
         "subjects": this.state.data,
-        "isUpdate": sessionStorage.getItem("newUser") == "true" ? false : true,
+        "isUpdate": sessionStorage.getItem("newUser") === "true" ? false : true,
         "transcript": {
           "fileData": this.state.base64,
           "fileName": this.state.fileName,
@@ -134,7 +142,7 @@ class DashboardComponent extends Component {
       }
       axios
         .post(
-          "https://4c3b3834.ngrok.io/api/saveStudentData", data
+          "http://b5560796.ngrok.io/api/saveStudentData", data
         )
         .then(res => {
 
@@ -144,21 +152,47 @@ class DashboardComponent extends Component {
               this.studentDataUrl + studentData.studentID
             )
             .then(resp => {
+              ToastsStore.success("Request Submitted Successfully");
               this.loader.className = "";
               this.loader.firstChild.style.display = "none";
               sessionStorage.setItem("userData", JSON.stringify(resp.data));
-              if (resp.data.subjects.length == 0) {
+              if (resp.data.subjects.length === 0) {
                 sessionStorage.setItem("newUser", "true");
               } else {
                 sessionStorage.setItem("newUser", "false");
               }
-              this.props.history.push("/studentDetails/");
+              window.setTimeout(function () {
+                window.location.href = '/studentDetails/';
+              }, 1000);
+            })
+            .catch(error => {
+              ToastsStore.info("Please try again!");
+              this.loader.className = "";
+              this.loader.firstChild.style.display = "none";
             });
-
+        })
+        .catch(error => {
+          ToastsStore.info("Please try again!");
+          this.loader.className = "";
+          this.loader.firstChild.style.display = "none";
         });
-    } else {
-      alert("Select at least one subject!");
     }
+    else {
+      this.loader.className = "";
+      this.loader.firstChild.style.display = "none";
+      this.setState({ visible: true })
+    }
+  }
+  closeSubModal() {
+    this.setState({
+      visible: false
+    });
+  }
+  closeSubModal1(e) {
+    e.preventDefault();
+    this.setState({
+      visible: false
+    });
   }
 
   renderTable(data) {
@@ -190,22 +224,32 @@ class DashboardComponent extends Component {
           "https://api.ocr.space/parse/image", formData, { headers: { "apikey": this.state.apikey, "Content-Type": 'form-data' } }
         )
         .then(res => {
-          console.log(res.data);
           axios
             .post(
-              "http://e3fb5dcd.ngrok.io/api/v1/extractDataFromOcr", res.data
+              "http://13e27bff.ngrok.io/api/v1/extractDataFromOcr", res.data
             )
             .then(resp => {
-              var temp = [];
               for (var i = 0; i < resp.data.result.length; i++) {
-                temp.push({ "subjectName": resp.data.result[i] });
+                this.temp.push({ "subjectName": resp.data.result[i] });
               }
-              this.setState({ JsonData: JSON.stringify(temp) });
+              this.setState({ JsonData: JSON.stringify(this.temp) });
+              ToastsStore.info("Transcript Uploaded!");
               this.getSubjects();
             })
+            .catch(error => {
+              ToastsStore.info("Please try again!");
+              this.loader.className = "";
+              this.loader.firstChild.style.display = "none";
+            });
         })
+        .catch(error => {
+          ToastsStore.info("Server is down. Please try again!");
+          this.loader.className = "";
+          this.loader.firstChild.style.display = "none";
+        });
     }
     else {
+      ToastsStore.warning("Please upload a PDF");
     }
   }
 
@@ -230,9 +274,10 @@ class DashboardComponent extends Component {
   getSubjects() {
     axios
       .get(
-        "https://4c3b3834.ngrok.io/api/Subject/getSubjects"
+        "http://b5560796.ngrok.io/api/Subject/getSubjects"
       )
       .then(res => {
+        document.getElementById("hiddenSub").style.display = "block";
         this.loader.className = "";
         this.loader.firstChild.style.display = "none";
         this.setState({ data: res.data });
@@ -241,6 +286,11 @@ class DashboardComponent extends Component {
             this.selectRowProp.selected.push(subject.module);
           }
         });
+      })
+      .catch(error => {
+        ToastsStore.info("Please check your Internet Connection!");
+        this.loader.className = "";
+        this.loader.firstChild.style.display = "none";
       });
   }
 
@@ -248,6 +298,7 @@ class DashboardComponent extends Component {
 
     return (
       <div>
+        <ToastsContainer position={ToastsContainerPosition.BOTTOM_CENTER} store={ToastsStore} />
         <div id="loader">
           <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
         </div>
@@ -257,20 +308,24 @@ class DashboardComponent extends Component {
               <div className="card-body">
                 <div className="container">
                   <IsNewUSer onFileChange={this.onFileChange} errorFileSize={this.state.errorFileSize} fileName={this.state.fileName} upload={this.upload} />
-                  <hr className="my-4" />
-                  <div>
-                    <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.state.data}>
-                      <TableHeaderColumn isKey dataField="module" dataAlign="center">Subject ID</TableHeaderColumn>
-                      <TableHeaderColumn dataField="subjectName" dataAlign="center">Subject Name</TableHeaderColumn>
-                      {/* <TableHeaderColumn dataField="status" dataFormat={this.colFormatter} dataAlign="center">Admin Status</TableHeaderColumn> */}
-                    </BootstrapTable>
+                  <div id="hiddenSub">
+                    <h3>Available Subjects</h3>
                     <hr className="my-4" />
-                    <div className="row">
-                      <div className="col-6">
-                        <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.state.uploadedTranscript} onClick={this.submit}>Submit</button>
-                      </div>
-                      <div className="col-6">
-                        <button className="btn btn-lg btn-secondary btn-block text-uppercase" type="submit" disabled={!this.state.uploadedTranscript} onClick={this.pdfDownload}>Download PDF</button>
+                    <div>
+                      <i className="text-infos"><b>Note:</b> Please choose atleast one subject</i>
+                      <BootstrapTable version='4' selectRow={this.selectRowProp} className="table table-striped" data={this.state.data}>
+                        <TableHeaderColumn isKey dataField="module" dataAlign="center">Subject ID</TableHeaderColumn>
+                        <TableHeaderColumn dataField="subjectName" width={'50%'} filter={{ type: 'TextFilter', delay: 1000 }} dataAlign="center">Subject Name</TableHeaderColumn>
+                        {/* <TableHeaderColumn dataField="status" dataFormat={this.colFormatter} dataAlign="center">Admin Status</TableHeaderColumn> */}
+                      </BootstrapTable>
+                      <hr className="my-4" />
+                      <div className="row">
+                        <div className="col-6">
+                          <button className="btn btn-lg btn-primary btn-block text-uppercase" type="submit" disabled={!this.state.uploadedTranscript} onClick={this.submit}>Submit</button>
+                        </div>
+                        <div className="col-6">
+                          <button className="btn btn-lg btn-info btn-block text-uppercase" type="submit" disabled={!this.state.uploadedTranscript} onClick={this.pdfDownload}>Download as PDF</button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -278,6 +333,20 @@ class DashboardComponent extends Component {
               </div>
             </div>
           </div>
+          <Modal visible={this.state.visible} width="600" height="300" effect="fadeInUp" onClickAway={() => this.closeSubModal()}>
+            <div className="container c1">
+              <div className="row">
+                <div className="mx-auto">
+                  <h5 className="text-center">ALERT!!</h5>
+                  <hr className="my-4" />
+                  <p>Please select atleast one Subject</p>
+                  <form className="form-signin">
+                    <button className="btn btn-lg btn-secondary btn-block text-uppercase" onClick={this.closeSubModal1}>OK</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </Modal>
           <div className="pdfPrint hidden">
           </div>
         </div>
@@ -289,7 +358,7 @@ class DashboardComponent extends Component {
 function PdfContent(props) {
   var subjectsSelected = [];
   var studentData = JSON.parse(sessionStorage.getItem('userData'));
-  if (props.data != "") {
+  if (props.data !== "") {
     props.data.map((subject) => {
       if (subject.isSelected) {
         subjectsSelected.push(
@@ -322,7 +391,7 @@ function PdfContent(props) {
 }
 
 function IsNewUSer(props) {
-  if (sessionStorage.getItem("newUser") == "true") {
+  if (sessionStorage.getItem("newUser") === "true") {
     return (
       <div>
         <h4>Upload Transcript in PDF format</h4>
