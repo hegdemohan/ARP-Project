@@ -13,7 +13,7 @@
     "fs": "0.0.1-security",
     "http-post": "^0.1.1",
     "jquery": "^3.4.1",
-    "jspdf": "^1.5.3",
+    "jspdf": "^2.3.1",
     "mdbreact": "^4.15.0",
     "nodemailer": "^6.2.1",
     "react": "^16.4.0",
